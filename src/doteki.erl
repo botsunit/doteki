@@ -36,12 +36,12 @@ get_env(App, Key) when is_atom(App), is_atom(Key) ->
   get_env([App, Key]);
 get_env(App, Path) when is_atom(App), is_list(Path) ->
   get_env([App|Path]);
-get_env(AppPath, Default) when is_list(AppPath) ->
+get_env(Path, Default) when is_list(Path) ->
   bucs:pipecall([
                  {fun buclists:pipemap/2, 
-                  [[fun atom_to_list/1, fun string:to_upper/1], AppPath]},
+                  [[fun atom_to_list/1, fun string:to_upper/1], Path]},
                  {fun string:join/2, ["_"]},
-                 {fun os:getenv/2, [get_env1(AppPath, Default)]},
+                 {fun os:getenv/2, [get_env1(Path, Default)]},
                  {fun get_env3/2, [Default]}
                 ]).
 
