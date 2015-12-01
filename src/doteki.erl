@@ -37,12 +37,13 @@ get_env(App, Key) when is_atom(App), is_atom(Key) ->
 get_env(App, Path) when is_atom(App), is_list(Path) ->
   get_env([App|Path]);
 get_env(AppPath, Default) when is_list(AppPath) ->
-  EnvVar = bucs:pipecall([
-                          {fun buclists:pipemap/2, 
-                           [[fun atom_to_list/1, fun string:to_upper/1], AppPath]},
-                          {fun string:join/2, ["_"]}
-                         ]),
-  os:get_env(EnvVar, get_env1(AppPath, Default)).
+  bucs:pipecall([
+                 {fun buclists:pipemap/2, 
+                  [[fun atom_to_list/1, fun string:to_upper/1], AppPath]},
+                 {fun string:join/2, ["_"]},
+                 {fun os:getenv/2, [get_env1(AppPath, Default)]},
+                 {fun get_env3/2, [Default]}
+                ]).
 
 get_env1([App|Fields], Default) ->
   case get_env2(Fields, application:get_all_env(App)) of
@@ -57,7 +58,17 @@ get_env2(_, undefined) ->
 get_env2([], Result) ->
   Result;
 get_env2([Field|Rest], Data) ->
-  get_env2(Rest, elists:keyfind(Field, 1, Data, undefined)).
+  get_env2(Rest, buclists:keyfind(Field, 1, Data, undefined)).
+
+get_env3(Value, Default) when is_atom(Value) ->
+  case bucs:to_string(Value) of
+    "env." ++ EnvVar ->
+      os:getenv(EnvVar, Default);
+    _ -> 
+      Value
+  end;
+get_env3(Value, _) -> 
+  Value.
 
 % @doc
 % Return the evironment value from the environment variable, or the configuration file, or 
