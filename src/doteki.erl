@@ -64,6 +64,41 @@ get_env3(Value, Default) when is_atom(Value) ->
   case bucs:to_string(Value) of
     "env." ++ EnvVar ->
       os:getenv(EnvVar, Default);
+    "fun." ++ Fun ->
+      case re:run(Fun, "^([^:]*):([^\/]*)/(.*)$", [{capture, all_but_first, list}]) of
+        nomatch -> 
+          Default;
+        {match,[Module, Function, "0"]} ->
+          case bucs:apply(bucs:to_atom(Module), 
+                          bucs:to_atom(Function),
+                          []) of
+            error -> Default;
+            {ok, Result} -> Result
+          end
+      end;
+    _ -> 
+      Value
+  end;
+get_env3({Fun, Args} = Value, Default) when is_atom(Fun),
+                                            is_list(Args) ->
+  case bucs:to_string(Fun) of
+    "fun." ++ Fun1 ->
+      case re:run(Fun1, "^([^:]*):([^\/]*)/(.*)$", [{capture, all_but_first, list}]) of
+        nomatch -> 
+          Default;
+        {match,[Module, Function, N]} ->
+          case list_to_integer(N) == length(Args) of
+            true ->
+              case bucs:apply(bucs:to_atom(Module), 
+                         bucs:to_atom(Function),
+                         Args) of
+                error -> Default;
+                {ok, Result} -> Result
+              end;
+            false ->
+              Default
+          end
+      end;
     _ -> 
       Value
   end;
