@@ -107,7 +107,7 @@ Example :
 ```erlang
 
  undefined = application:get_env(test, key).
- eapplication:set_env(test, [{key, "value"}]).
+ doteki:set_env(test, [{key, "value"}]).
  {ok, Value} = application:get_env(test, key).
 ```
 
