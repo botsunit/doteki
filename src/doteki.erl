@@ -11,17 +11,17 @@
 
 % @equiv get_env(Path, undefined)
 -spec get_env([atom()]) -> undefined | {ok, term()}.
-get_env(Path) when is_list(Path) -> 
+get_env(Path) when is_list(Path) ->
   get_env(Path, undefined).
 
 % @doc
-% Return the evironment value from the environment variable, or the configuration file, or 
+% Return the evironment value from the environment variable, or the configuration file, or
 % the default value.
 %
 % Example:
 %
 % If you call <tt>doteki:get_env(app, key)</tt>, id the <tt>APP_KEY</tt> environment
-% variable is set, <i>doteki</i> will return it value. Else it will search for an existing 
+% variable is set, <i>doteki</i> will return it value. Else it will search for an existing
 % value for the <tt>key</tt> for the <tt>app</tt> in the configuration.
 %
 % Calling <tt>doteki:get_env([app, keyone, keytwo], "default")</tt> return :
@@ -38,7 +38,7 @@ get_env(App, Path) when is_atom(App), is_list(Path) ->
   get_env([App|Path]);
 get_env(Path, Default) when is_list(Path) ->
   bucs:pipecall([
-                 {fun buclists:pipemap/2, 
+                 {fun buclists:pipemap/2,
                   [[fun atom_to_list/1, fun string:to_upper/1], Path]},
                  {fun string:join/2, ["_"]},
                  {fun os:getenv/2, [get_env1(Path, Default)]},
@@ -66,17 +66,17 @@ get_env3(Value, Default) when is_atom(Value) ->
       os:getenv(EnvVar, Default);
     "fun." ++ Fun ->
       case re:run(Fun, "^([^:]*):([^\/]*)/(.*)$", [{capture, all_but_first, list}]) of
-        nomatch -> 
+        nomatch ->
           Default;
         {match,[Module, Function, "0"]} ->
-          case bucs:apply(bucs:to_atom(Module), 
+          case bucs:apply(bucs:to_atom(Module),
                           bucs:to_atom(Function),
                           []) of
             error -> Default;
             {ok, Result} -> Result
           end
       end;
-    _ -> 
+    _ ->
       Value
   end;
 get_env3({Fun, Args} = Value, Default) when is_atom(Fun),
@@ -84,12 +84,12 @@ get_env3({Fun, Args} = Value, Default) when is_atom(Fun),
   case bucs:to_string(Fun) of
     "fun." ++ Fun1 ->
       case re:run(Fun1, "^([^:]*):([^\/]*)/(.*)$", [{capture, all_but_first, list}]) of
-        nomatch -> 
+        nomatch ->
           Default;
         {match,[Module, Function, N]} ->
           case list_to_integer(N) == length(Args) of
             true ->
-              case bucs:apply(bucs:to_atom(Module), 
+              case bucs:apply(bucs:to_atom(Module),
                          bucs:to_atom(Function),
                          Args) of
                 error -> Default;
@@ -99,20 +99,20 @@ get_env3({Fun, Args} = Value, Default) when is_atom(Fun),
               Default
           end
       end;
-    _ -> 
+    _ ->
       Value
   end;
-get_env3(Value, _) -> 
+get_env3(Value, _) ->
   Value.
 
 % @doc
-% Return the evironment value from the environment variable, or the configuration file, or 
+% Return the evironment value from the environment variable, or the configuration file, or
 % the default value.
 %
 % Example:
 %
 % If you call <tt>doteki:get_env(app, key)</tt>, id the <tt>APP_KEY</tt> environment
-% variable is set, <i>doteki</i> will return it value. Else it will search for an existing 
+% variable is set, <i>doteki</i> will return it value. Else it will search for an existing
 % value for the <tt>key</tt> for the <tt>app</tt> in the configuration.
 %
 % Calling <tt>doteki:get_env([app, keyone, keytwo], "default")</tt> return :
@@ -172,7 +172,7 @@ set_env_from_file(File) ->
     {ok, [Terms]} ->
       set_env_from_config(Terms);
     E ->
-      E   
+      E
   end.
 
 % @doc
@@ -192,7 +192,7 @@ set_env_from_file(File) ->
 % environment defined in the app file won't be loaded if an other env was loaded before.
 % @end
 -spec set_env_from_config([term()]) -> ok | {error, any()}.
-set_env_from_config([]) -> ok; 
+set_env_from_config([]) -> ok;
 set_env_from_config([{AppName, AppConfig}|Rest]) ->
   case set_env(AppName, AppConfig) of
     ok -> set_env_from_config(Rest);
