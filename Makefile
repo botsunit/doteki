@@ -1,6 +1,4 @@
 PROJECT = doteki
-PROJECT_VERSION = 0.0.1
-PROJECT_DESCRIPTION = A more dynamic sys.config
 
 DOC_DEPS = edown
 DEPS = bucs
