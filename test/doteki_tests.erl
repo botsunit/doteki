@@ -49,7 +49,21 @@ t_envvar() ->
 
   ?assertEqual(undefined, doteki:get_env([app2, app2key2, app2key21])),
   os:putenv("MY_CUSTOM_ENV_VAR", "forced_app2value21"),
-  ?assertEqual("forced_app2value21", doteki:get_env([app2, app2key2, app2key21])).
+  ?assertEqual("forced_app2value21", doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "forced_app2value21:blabla"),
+  ?assertEqual("forced_app2value21:blabla", doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "atom_value:atom"),
+  ?assertEqual(atom_value, doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "string_value:string"),
+  ?assertEqual("string_value", doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "binary_value:binary"),
+  ?assertEqual(<<"binary_value">>, doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "123:integer"),
+  ?assertEqual(123, doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "12.3:float"),
+  ?assertEqual(12.3, doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "{atom, string, [1,2,3,4]}:term"),
+  ?assertEqual({atom, string, [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])).
 
 f_fun() ->
   ?assertEqual(123, doteki:get_env([app2, app2key2, app2key22])),

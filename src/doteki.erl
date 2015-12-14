@@ -8,6 +8,7 @@
          , set_env_from_file/1
          , set_env_from_config/1
          , unset_env/1
+         , compile/1
         ]).
 
 % @equiv get_env(Path, undefined)
@@ -42,7 +43,7 @@ get_env(Path, Default) when is_list(Path) ->
                  {fun buclists:pipemap/2,
                   [[fun atom_to_list/1, fun string:to_upper/1], Path]},
                  {fun string:join/2, ["_"]},
-                 {fun os:getenv/2, [get_env1(Path, Default)]},
+                 {fun os_get_env/2, [get_env1(Path, Default)]},
                  {fun get_env3/2, [Default]}
                 ]).
 
@@ -64,7 +65,7 @@ get_env2([Field|Rest], Data) ->
 get_env3(Value, Default) when is_atom(Value) ->
   case bucs:to_string(Value) of
     "env." ++ EnvVar ->
-      os:getenv(EnvVar, Default);
+      os_get_env(EnvVar, Default);
     "fun." ++ Fun ->
       case re:run(Fun, "^([^:]*):([^\/]*)/(.*)$", [{capture, all_but_first, list}]) of
         nomatch ->
@@ -105,6 +106,35 @@ get_env3({Fun, Args} = Value, Default) when is_atom(Fun),
   end;
 get_env3(Value, _) ->
   Value.
+
+os_get_env(Var, Default) ->
+  case os:getenv(Var, Default) of
+    Value when is_list(Value) ->
+      case re:run(Value, "(.*):(\[^:\]*)", [{capture, all, list}]) of
+        {match,[_, Value1, Type]} ->
+          to_value(Value1, bucs:to_atom(Type));
+        _ ->
+          Value
+      end;
+    Other -> Other
+  end.
+
+to_value(V, string) -> V;
+to_value(V, atom) -> bucs:to_atom(V);
+to_value(V, binary) -> bucs:to_binary(V);
+to_value(V, integer) -> bucs:to_integer(V);
+to_value(V, float) -> bucs:to_float(V);
+to_value(V, term) ->
+  V1 = case lists:reverse(V) of
+         [$.|_] -> V;
+         _ -> V ++ "."
+       end,
+  {ok, Tokens, _} = erl_scan:string(V1),
+  case erl_parse:parse_term(Tokens) of
+    {ok, Term} -> Term;
+    _ -> undefined
+  end;
+to_value(V, T) -> V ++ ":" ++ bucs:to_string(T).
 
 % @doc
 % Return the evironment value from the environment variable, or the configuration file, or
@@ -205,7 +235,7 @@ set_env_from_config([{AppName, AppConfig}|Rest]) ->
 % Remove the configuration parameters and its value for the <tt>Application</tt> or the
 % given <tt>Path</tt>
 % @end
--spec unset_env([term()] | term()) -> ok.
+-spec unset_env([atom()] | atom()) -> ok.
 unset_env(App) when is_atom(App) ->
   lists:foreach(fun({Par, _}) ->
                     unset_env([App, Par])
@@ -231,4 +261,10 @@ unset_env_key([Key|Keys], Val) ->
     _ ->
       Val
   end.
+
+% @doc
+% @end
+-spec compile(atom()) -> ok.
+compile(_App) ->
+  ok.
 
