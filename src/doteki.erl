@@ -7,6 +7,7 @@
          , set_env/2
          , set_env_from_file/1
          , set_env_from_config/1
+         , unset_env/1
         ]).
 
 % @equiv get_env(Path, undefined)
@@ -194,8 +195,40 @@ set_env_from_file(File) ->
 -spec set_env_from_config([term()]) -> ok | {error, any()}.
 set_env_from_config([]) -> ok;
 set_env_from_config([{AppName, AppConfig}|Rest]) ->
+  ok = unset_env(AppName),
   case set_env(AppName, AppConfig) of
     ok -> set_env_from_config(Rest);
     E -> E
+  end.
+
+% @doc
+% Remove the configuration parameters and its value for the <tt>Application</tt> or the
+% given <tt>Path</tt>
+% @end
+-spec unset_env([term()] | term()) -> ok.
+unset_env(App) when is_atom(App) ->
+  lists:foreach(fun({Par, _}) ->
+                    unset_env([App, Par])
+                end, application:get_all_env(App));
+unset_env([App, Par]) ->
+  application:unset_env(App, Par);
+unset_env([App, Par|Keys]) ->
+  case application:get_env(App, Par) of
+    undefined ->
+      ok;
+    {ok, Val} ->
+      Env = unset_env_key(Keys, Val),
+      application:set_env(App, Par, Env)
+  end.
+
+unset_env_key([Key], Val) ->
+  lists:keydelete(Key, 1, Val);
+unset_env_key([Key|Keys], Val) ->
+  case lists:keyfind(Key, 1, Val) of
+    {Key, Sub} ->
+      Env = unset_env_key(Keys, Sub),
+      lists:keyreplace(Key, 1, Val, Env);
+    _ ->
+      Val
   end.
 
