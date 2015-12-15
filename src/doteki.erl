@@ -301,8 +301,6 @@ compile_to_term([], Result) ->
   lists:reverse(Result);
 compile_to_term([{Key, Term}|Terms], Result) ->
   compile_to_term(Terms, [{Key, compile_to_term(Term)}|Result]);
-compile_to_term([X|Terms], Result) when is_tuple(X) ->
-  compile_to_term(Terms, [X|Result]);
 compile_to_term([X|Terms], Result) ->
   compile_to_term(Terms, [X|Result]).
 
