@@ -110,9 +110,14 @@ get_env3(Value, _) ->
 os_get_env(Var, Default) ->
   case os:getenv(Var, Default) of
     Value when is_list(Value) ->
-      case re:run(Value, "(.*):(\[^:\]*)", [{capture, all, list}]) of
-        {match,[_, Value1, Type]} ->
-          to_value(Value1, bucs:to_atom(Type));
+      case bucs:is_string(Value) of
+        true ->
+          case re:run(Value, "(.*):(\[^:\]*)", [{capture, all, list}]) of
+            {match,[_, Value1, Type]} ->
+              to_value(Value1, bucs:to_atom(Type));
+            _ ->
+              Value
+          end;
         _ ->
           Value
       end;
