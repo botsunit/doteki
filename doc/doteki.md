@@ -9,19 +9,33 @@
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_env-1">get_env/1</a></td><td>Equivalent to <a href="#get_env-2"><tt>get_env(Path, undefined)</tt></a>.</td></tr><tr><td valign="top"><a href="#get_env-2">get_env/2</a></td><td> 
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#compile-2">compile/2</a></td><td>
+Compile a configuration file.</td></tr><tr><td valign="top"><a href="#get_env-1">get_env/1</a></td><td>Equivalent to <a href="#get_env-2"><tt>get_env(Path, undefined)</tt></a>.</td></tr><tr><td valign="top"><a href="#get_env-2">get_env/2</a></td><td> 
 Return the evironment value from the environment variable, or the configuration file, or 
 the default value.</td></tr><tr><td valign="top"><a href="#get_env-3">get_env/3</a></td><td> 
 Return the evironment value from the environment variable, or the configuration file, or 
 the default value.</td></tr><tr><td valign="top"><a href="#set_env-2">set_env/2</a></td><td> 
 Load a configuration for the given app with the given configuration.</td></tr><tr><td valign="top"><a href="#set_env_from_config-1">set_env_from_config/1</a></td><td> 
 Load an application configuration from the given configuration.</td></tr><tr><td valign="top"><a href="#set_env_from_file-1">set_env_from_file/1</a></td><td> 
-Load an application configuration from the given config file.</td></tr></table>
+Load an application configuration from the given config file.</td></tr><tr><td valign="top"><a href="#unset_env-1">unset_env/1</a></td><td>
+Remove the configuration parameters and its value for the <tt>Application</tt> or the
+given <tt>Path</tt></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
+
+<a name="compile-2"></a>
+
+### compile/2 ###
+
+<pre><code>
+compile(In::<a href="file.md#type-filename">file:filename()</a>, Out::<a href="file.md#type-filename">file:filename()</a>) -&gt; ok | {error, term()}
+</code></pre>
+<br />
+
+Compile a configuration file
 
 <a name="get_env-1"></a>
 
@@ -167,4 +181,16 @@ WARNING :
 
 Call this function *after* loading your application. This is not mandatory but the
 environment defined in the app file won't be loaded if an other env was loaded before.
+
+<a name="unset_env-1"></a>
+
+### unset_env/1 ###
+
+<pre><code>
+unset_env(App::[atom()] | atom()) -&gt; ok
+</code></pre>
+<br />
+
+Remove the configuration parameters and its value for the `Application` or the
+given `Path`
 

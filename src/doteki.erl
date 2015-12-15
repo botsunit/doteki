@@ -8,13 +8,15 @@
          , set_env_from_file/1
          , set_env_from_config/1
          , unset_env/1
-         , compile/1
+         , compile/2
         ]).
+
+-define(UNDEFINED, undefined).
 
 % @equiv get_env(Path, undefined)
 -spec get_env([atom()]) -> undefined | {ok, term()}.
 get_env(Path) when is_list(Path) ->
-  get_env(Path, undefined).
+  get_env(Path, ?UNDEFINED).
 
 % @doc
 % Return the evironment value from the environment variable, or the configuration file, or
@@ -44,23 +46,24 @@ get_env(Path, Default) when is_list(Path) ->
                   [[fun atom_to_list/1, fun string:to_upper/1], Path]},
                  {fun string:join/2, ["_"]},
                  {fun os_get_env/2, [get_env1(Path, Default)]},
-                 {fun get_env3/2, [Default]}
+                 {fun get_env3/2, [Default]},
+                 fun compile_to_term/1
                 ]).
 
 get_env1([App|Fields], Default) ->
   case get_env2(Fields, application:get_all_env(App)) of
-    undefined ->
+    ?UNDEFINED ->
       Default;
     X ->
       X
   end.
 
-get_env2(_, undefined) ->
-  undefined;
+get_env2(_, ?UNDEFINED) ->
+  ?UNDEFINED;
 get_env2([], Result) ->
   Result;
 get_env2([Field|Rest], Data) ->
-  get_env2(Rest, buclists:keyfind(Field, 1, Data, undefined)).
+  get_env2(Rest, buclists:keyfind(Field, 1, Data, ?UNDEFINED)).
 
 get_env3(Value, Default) when is_atom(Value) ->
   case bucs:to_string(Value) of
@@ -92,8 +95,8 @@ get_env3({Fun, Args} = Value, Default) when is_atom(Fun),
           case list_to_integer(N) == length(Args) of
             true ->
               case bucs:apply(bucs:to_atom(Module),
-                         bucs:to_atom(Function),
-                         Args) of
+                              bucs:to_atom(Function),
+                              Args) of
                 error -> Default;
                 {ok, Result} -> Result
               end;
@@ -109,7 +112,7 @@ get_env3(Value, _) ->
 
 os_get_env(Var, Default) ->
   case os:getenv(Var, Default) of
-    Value when is_list(Value) ->
+    Value when is_list(Value), Value =/= Default ->
       case bucs:is_string(Value) of
         true ->
           case re:run(Value, "(.*):(\[^:\]*)", [{capture, all, list}]) of
@@ -137,7 +140,7 @@ to_value(V, term) ->
   {ok, Tokens, _} = erl_scan:string(V1),
   case erl_parse:parse_term(Tokens) of
     {ok, Term} -> Term;
-    _ -> undefined
+    _ -> ?UNDEFINED
   end;
 to_value(V, T) -> V ++ ":" ++ bucs:to_string(T).
 
@@ -249,7 +252,7 @@ unset_env([App, Par]) ->
   application:unset_env(App, Par);
 unset_env([App, Par|Keys]) ->
   case application:get_env(App, Par) of
-    undefined ->
+    ?UNDEFINED ->
       ok;
     {ok, Val} ->
       Env = unset_env_key(Keys, Val),
@@ -268,8 +271,70 @@ unset_env_key([Key|Keys], Val) ->
   end.
 
 % @doc
+% Compile a configuration file
 % @end
--spec compile(atom()) -> ok.
-compile(_App) ->
-  ok.
+-spec compile(file:filename(), file:filename()) -> ok | {error, term()}.
+compile(In, Out) ->
+  case file:consult(In) of
+    {ok, [Terms]} ->
+      Terms1 = case is_list(Terms) and not bucs:is_string(Terms) of
+                 true -> Terms;
+                 _ -> [Terms]
+               end,
+      bucs:pipecall([
+                     {fun compile_to_term/1, [Terms1]},
+                     fun format/1,
+                     {fun write_file/2, [Out]}
+                    ]);
+    E -> E
+  end.
+
+compile_to_term(Term) ->
+  case is_list(Term) andalso not bucs:is_string(Term) of
+    true ->
+      compile_to_term(Term, []);
+    _ ->
+      get_env3(Term, ?UNDEFINED)
+  end.
+
+compile_to_term([], Result) ->
+  lists:reverse(Result);
+compile_to_term([{Key, Term}|Terms], Result) ->
+  compile_to_term(Terms, [{Key, compile_to_term(Term)}|Result]).
+
+write_file(Data, File) ->
+  file:write_file(File, Data).
+
+format(Terms) ->
+  lists:foldl(fun(Term, Content) ->
+                  Content ++ pretty(Term)
+              end, "", Terms).
+
+pretty(Term) ->
+  Abstract = erl_syntax:abstract(Term),
+  AnnF = fun(Node) -> annotate_tuple(Node) end,
+  AnnAbstract = postorder(AnnF, Abstract),
+  HookF = fun(Node, Ctxt, Cont) ->
+              Doc = Cont(Node, Ctxt),
+              prettypr:above(prettypr:empty(), Doc)
+          end,
+  io_lib:format("~s~n", [
+                         lists:flatten(
+                           erl_prettypr:format(
+                             AnnAbstract, [{hook, HookF}, {paper, 160}, {ribbon, 145}])) ++ "."]).
+
+annotate_tuple(Node) ->
+  case erl_syntax:type(Node) of
+    tuple -> erl_syntax:add_ann(tuple, Node);
+    _ -> Node
+  end.
+
+postorder(F, Tree) ->
+  F(case erl_syntax:subtrees(Tree) of
+      [] -> Tree;
+      List -> erl_syntax:update_tree(Tree,
+                                     [[postorder(F, Subtree)
+                                       || Subtree <- Group]
+                                      || Group <- List])
+    end).
 

@@ -30,7 +30,8 @@ doteki_test_() ->
    [
     ?_test(t_default())
     , ?_test(t_envvar())
-    , ?_test(f_fun())
+    , ?_test(t_fun())
+    , ?_test(t_multi())
    ]}.
 
 setup() ->
@@ -65,7 +66,7 @@ t_envvar() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "{atom, string, [1,2,3,4]}:term"),
   ?assertEqual({atom, string, [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])).
 
-f_fun() ->
+t_fun() ->
   ?assertEqual(123, doteki:get_env([app2, app2key2, app2key22])),
   ?assertEqual(246, doteki:get_env([app1, app1key2, app1key21])),
   ?assertEqual(missing_function, doteki:get_env([app1, app1key3], missing_function)),
@@ -73,6 +74,11 @@ f_fun() ->
   ?assertEqual(bad_parameters, doteki:get_env([app1, app1key5], bad_parameters)),
   ?assertEqual(missing_function, doteki:get_env([app1, app1key6], missing_function)),
   ?assertEqual(function_error, doteki:get_env([app1, app1key7], function_error)).
+
+t_multi() ->
+  ?assertEqual([{app1key21, 246}, {app1key22, app1value22}], doteki:get_env([app1, app1key2])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "app2value21:string"),
+  ?assertEqual([{app2key21, "app2value21"}, {app2key22, 123}], doteki:get_env([app2, app2key2])).
 
 function() -> 123.
 function(A) -> A * 2.
