@@ -32,6 +32,7 @@ doteki_test_() ->
     , ?_test(t_envvar())
     , ?_test(t_fun())
     , ?_test(t_multi())
+    , ?_test(t_multienv())
    ]}.
 
 setup() ->
@@ -79,6 +80,12 @@ t_multi() ->
   ?assertEqual([{app1key21, 246}, {app1key22, app1value22}], doteki:get_env([app1, app1key2])),
   os:putenv("MY_CUSTOM_ENV_VAR", "app2value21:string"),
   ?assertEqual([{app2key21, "app2value21"}, {app2key22, 123}], doteki:get_env([app2, app2key2])).
+
+t_multienv() ->
+  ?assertEqual(app1value1, doteki:get_env([[app1, app1key1], [a,b], [c, d]], undefined)),
+  ?assertEqual(app1value1, doteki:get_env([[a, b], [app1, app1key1], [c, d]], undefined)),
+  ?assertEqual(app1value1, doteki:get_env([[a, b], [c, d], [app1, app1key1]], undefined)),
+  ?assertEqual(default, doteki:get_env([[a, b], [c, d], [e, f]], default)).
 
 function() -> 123.
 function(A) -> A * 2.

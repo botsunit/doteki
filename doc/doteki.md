@@ -53,7 +53,7 @@ Equivalent to [`get_env(Path, undefined)`](#get_env-2).
 ### get_env/2 ###
 
 <pre><code>
-get_env(App::atom() | [atom()], Key::atom() | [atom()] | term()) -&gt; undefined | {ok, term()}
+get_env(App::atom() | [atom()] | [[atom()]], Key::atom() | [atom()] | term()) -&gt; undefined | {ok, term()}
 </code></pre>
 <br />
 

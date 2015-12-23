@@ -35,20 +35,30 @@ get_env(Path) when is_list(Path) ->
 %   <li>else <tt>"default"</tt></li>
 % </ul>
 % @end
--spec get_env(atom() | [atom()], atom() | [atom()] | term()) -> undefined | {ok, term()}.
+-spec get_env(atom() | [atom()] | [[atom()]], atom() | [atom()] | term()) -> undefined | {ok, term()}.
 get_env(App, Key) when is_atom(App), is_atom(Key) ->
   get_env([App, Key]);
 get_env(App, Path) when is_atom(App), is_list(Path) ->
   get_env([App|Path]);
 get_env(Path, Default) when is_list(Path) ->
-  bucs:pipecall([
-                 {fun buclists:pipemap/2,
-                  [[fun atom_to_list/1, fun string:to_upper/1], Path]},
-                 {fun string:join/2, ["_"]},
-                 {fun os_get_env/2, [get_env1(Path, Default)]},
-                 {fun get_env3/2, [Default]},
-                 fun compile_to_term/1
-                ]).
+  case lists:all(fun erlang:is_atom/1, Path) of
+    true ->
+      bucs:pipecall([
+                     {fun buclists:pipemap/2,
+                      [[fun atom_to_list/1, fun string:to_upper/1], Path]},
+                     {fun string:join/2, ["_"]},
+                     {fun os_get_env/2, [get_env1(Path, Default)]},
+                     {fun get_env3/2, [Default]},
+                     fun compile_to_term/1
+                    ]);
+    false ->
+      case lists:all(fun erlang:is_list/1, Path) of
+        true ->
+          get_env4(Path, Default);
+        false ->
+          undefined
+      end
+  end.
 
 get_env1([App|Fields], Default) ->
   case get_env2(Fields, application:get_all_env(App)) of
@@ -109,6 +119,14 @@ get_env3({Fun, Args} = Value, Default) when is_atom(Fun),
   end;
 get_env3(Value, _) ->
   Value.
+
+get_env4(Path, Default) ->
+  get_env4(Path, Default, Default).
+
+get_env4([Path|Rest], Default, Default) ->
+  get_env4(Rest, get_env(Path, Default), Default);
+get_env4(_, Result, _) ->
+  Result.
 
 os_get_env(Var, Default) ->
   case os:getenv(Var, Default) of
