@@ -65,7 +65,9 @@ t_envvar() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "12.3:float"),
   ?assertEqual(12.3, doteki:get_env([app2, app2key2, app2key21])),
   os:putenv("MY_CUSTOM_ENV_VAR", "{atom, string, [1,2,3,4]}:term"),
-  ?assertEqual({atom, string, [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])).
+  ?assertEqual({atom, string, [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("MY_CUSTOM_ENV_VAR", "{atom, \"string\", [1,2,3,4]}:term"),
+  ?assertEqual({atom, "string", [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])).
 
 t_fun() ->
   ?assertEqual(123, doteki:get_env([app2, app2key2, app2key22])),
