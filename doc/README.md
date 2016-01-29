@@ -10,6 +10,11 @@ __Authors:__ Gregoire Lejeune ([`gregoire.lejeune@botsunit.com`](mailto:gregoire
 
 
 
+## About ##
+
+__Dōteki__ allow you to use dynamic configuration in your erlang application.
+
+
 ## Licence ##
 
 Copyright (c) 2015, Bots Unit<br />

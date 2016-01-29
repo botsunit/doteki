@@ -3,6 +3,10 @@
 @version 1.0.0
 @title Dōteki
 @doc
+<h2>About</h2>
+
+<b>Dōteki</b> allow you to use dynamic configuration in your erlang application.
+
 <h2>Licence</h2>
 
 <p>Copyright (c) 2015, Bots Unit<br />

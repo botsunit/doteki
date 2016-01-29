@@ -1,20 +1,51 @@
 -module(doteki).
 
 -export([
-         get_env/1
+         get_all_env/0
+         , get_all_env/1
+         , get_env/1
          , get_env/2
          , get_env/3
          , set_env/2
          , set_env_from_file/1
          , set_env_from_config/1
          , unset_env/1
-         , compile/2
+         , compile_file/2
+         , compile/0
+         , compile/1
         ]).
 
 -define(UNDEFINED, undefined).
 
+% @doc
+% Returns the configuration parameters and their values for the application of the calling process.
+% @end
+-spec get_all_env() -> [term()].
+get_all_env() ->
+  case application:get_application() of
+    undefined -> [];
+    {ok, Cur} -> get_all_env(Cur)
+  end.
+
+% @doc
+% Returns the configuration parameters and their values for Application.
+% @end
+-spec get_all_env(Application :: atom()) -> [term()].
+get_all_env(Application) ->
+  get_all_env(application:get_all_env(Application), [Application], []).
+
+get_all_env([], _, Result) -> lists:reverse(Result);
+get_all_env([{Key, Value}|Rest], Path, Result) ->
+  case is_list(Value) and not bucs:is_string(Value) of
+    true ->
+      get_all_env(Rest, Path, [{Key, get_all_env(Value, [Key|Path], [])}|Result]);
+    false ->
+      get_all_env(Rest, Path, [{Key, get_env(lists:reverse([Key|Path]))}|Result])
+  end.
+
+
 % @equiv get_env(Path, undefined)
--spec get_env([atom()]) -> undefined | {ok, term()}.
+-spec get_env([atom()]) -> undefined | term().
 get_env(Path) when is_list(Path) ->
   get_env(Path, ?UNDEFINED).
 
@@ -35,7 +66,7 @@ get_env(Path) when is_list(Path) ->
 %   <li>else <tt>"default"</tt></li>
 % </ul>
 % @end
--spec get_env(atom() | [atom()] | [[atom()]], atom() | [atom()] | term()) -> undefined | {ok, term()}.
+-spec get_env(atom() | [atom()] | [[atom()]], atom() | [atom()] | term()) -> undefined | term().
 get_env(App, Key) when is_atom(App), is_atom(Key) ->
   get_env([App, Key]);
 get_env(App, Path) when is_atom(App), is_list(Path) ->
@@ -179,7 +210,7 @@ to_value(V, T) -> V ++ ":" ++ bucs:to_string(T).
 %   <li>else <tt>"default"</tt></li>
 % </ul>
 % @end
--spec get_env(atom(), atom() | [atom()], term()) -> undefined | {ok, term()}.
+-spec get_env(atom(), atom() | [atom()], term()) -> undefined | term().
 get_env(App, Key, Default) when is_atom(App), is_atom(Key) ->
   get_env([App, Key], Default);
 get_env(App, Path, Default) when is_atom(App), is_list(Path) ->
@@ -289,10 +320,10 @@ unset_env_key([Key|Keys], Val) ->
   end.
 
 % @doc
-% Compile a configuration file
+% Compile a configuration file and save the result in an other file
 % @end
--spec compile(file:filename(), file:filename()) -> ok | {error, term()}.
-compile(In, Out) ->
+-spec compile_file(file:filename(), file:filename()) -> ok | {error, term()}.
+compile_file(In, Out) ->
   case file:consult(In) of
     {ok, [Terms]} ->
       Terms1 = case is_list(Terms) and not bucs:is_string(Terms) of
@@ -305,6 +336,39 @@ compile(In, Out) ->
                      {fun write_file/2, [Out]}
                     ]);
     E -> E
+  end.
+
+% @doc
+% Compile the configuration of the current application and all loaded applications.
+% @end
+-spec compile() -> ok | {error, [atom()]}.
+compile() ->
+  Apps = [App || {App, _, _} <- application:loaded_applications()],
+  AllApps = case application:get_application() of
+    undefined -> Apps;
+    {ok, Cur} -> [Cur|Apps]
+  end,
+  compile(AllApps).
+
+% @doc
+% Compile the configuration of the given application/s
+% @end
+-spec compile(atom() | [atom()]) -> ok | {error, atom()} | {error, [atom()]}.
+compile(Apps) when is_list(Apps) ->
+  case lists:foldl(fun(App, Acc) ->
+                       case compile(App) of
+                         ok -> Acc;
+                         {error, _} -> [App|Acc]
+                       end
+                   end, [], Apps) of
+    [] -> ok;
+    L -> {error, L}
+  end;
+compile(App) when is_atom(App) ->
+  Terms = get_all_env(App),
+  case set_env_from_config([{App, Terms}]) of
+    ok -> ok;
+    {error, _} -> {error, App}
   end.
 
 compile_to_term(Term) ->
