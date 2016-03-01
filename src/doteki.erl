@@ -6,6 +6,27 @@
          , get_env/1
          , get_env/2
          , get_env/3
+         , get_as_string/1
+         , get_as_string/2
+         , get_as_string/3
+         , get_as_atom/1
+         , get_as_atom/2
+         , get_as_atom/3
+         , get_as_integer/1
+         , get_as_integer/2
+         , get_as_integer/3
+         , get_as_float/1
+         , get_as_float/2
+         , get_as_float/3
+         , get_as_binary/1
+         , get_as_binary/2
+         , get_as_binary/3
+         , get_as_list/1
+         , get_as_list/2
+         , get_as_list/3
+         , get_as_term/1
+         , get_as_term/2
+         , get_as_term/3
          , set_env/2
          , set_env_from_file/1
          , set_env_from_config/1
@@ -16,6 +37,195 @@
         ]).
 
 -define(UNDEFINED, undefined).
+
+% @doc
+% Return the result of `get_env/1` as string
+% @end
+get_as_string(Path) ->
+  case get_env(Path) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_string(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/2` as string
+% @end
+get_as_string(A, B) ->
+  case get_env(A, B) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_string(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/3` as string
+% @end
+get_as_string(A, B, C) ->
+  case get_env(A, B, C) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_string(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/1` as atom
+% @end
+get_as_atom(Path) ->
+  case get_env(Path) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_atom(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/2` as atom
+% @end
+get_as_atom(A, B) ->
+  case get_env(A, B) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_atom(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/3` as atom
+% @end
+get_as_atom(A, B, C) ->
+  case get_env(A, B, C) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_atom(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/1` as integer
+% @end
+get_as_integer(Path) ->
+  case get_env(Path) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_integer(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/2` as integer
+% @end
+get_as_integer(A, B) ->
+  case get_env(A, B) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_integer(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/3` as integer
+% @end
+get_as_integer(A, B, C) ->
+  case get_env(A, B, C) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_integer(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/1` as float
+% @end
+get_as_float(Path) ->
+  case get_env(Path) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_float(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/2` as float
+% @end
+get_as_float(A, B) ->
+  case get_env(A, B) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_float(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/3` as float
+% @end
+get_as_float(A, B, C) ->
+  case get_env(A, B, C) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_float(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/1` as binary
+% @end
+get_as_binary(Path) ->
+  case get_env(Path) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_binary(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/2` as binary
+% @end
+get_as_binary(A, B) ->
+  case get_env(A, B) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_binary(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/3` as binary
+% @end
+get_as_binary(A, B, C) ->
+  case get_env(A, B, C) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_binary(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/1` as list
+% @end
+get_as_list(Path) ->
+  case get_env(Path) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_list(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/2` as list
+% @end
+get_as_list(A, B) ->
+  case get_env(A, B) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_list(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/3` as list
+% @end
+get_as_list(A, B, C) ->
+  case get_env(A, B, C) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_list(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/1` as term
+% @end
+get_as_term(Path) ->
+  case get_env(Path) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_term(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/2` as term
+% @end
+get_as_term(A, B) ->
+  case get_env(A, B) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_term(Other)
+  end.
+
+% @doc
+% Return the result of `get_env/3` as term
+% @end
+get_as_term(A, B, C) ->
+  case get_env(A, B, C) of
+    ?UNDEFINED -> ?UNDEFINED;
+    Other -> bucs:to_term(Other)
+  end.
 
 % @doc
 % Returns the configuration parameters and their values for the application of the calling process.
