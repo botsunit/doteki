@@ -39,7 +39,7 @@
 -define(UNDEFINED, undefined).
 
 % @doc
-% Return the result of `get_env/1` as string
+% Return the result of <tt>get_env/1</tt> as string
 % @end
 get_as_string(Path) ->
   case get_env(Path) of
@@ -48,7 +48,7 @@ get_as_string(Path) ->
   end.
 
 % @doc
-% Return the result of `get_env/2` as string
+% Return the result of <tt>get_env/2</tt> as string
 % @end
 get_as_string(A, B) ->
   case get_env(A, B) of
@@ -57,7 +57,7 @@ get_as_string(A, B) ->
   end.
 
 % @doc
-% Return the result of `get_env/3` as string
+% Return the result of <tt>get_env/3</tt> as string
 % @end
 get_as_string(A, B, C) ->
   case get_env(A, B, C) of
@@ -66,7 +66,7 @@ get_as_string(A, B, C) ->
   end.
 
 % @doc
-% Return the result of `get_env/1` as atom
+% Return the result of <tt>get_env/1</tt> as atom
 % @end
 get_as_atom(Path) ->
   case get_env(Path) of
@@ -75,7 +75,7 @@ get_as_atom(Path) ->
   end.
 
 % @doc
-% Return the result of `get_env/2` as atom
+% Return the result of <tt>get_env/2</tt> as atom
 % @end
 get_as_atom(A, B) ->
   case get_env(A, B) of
@@ -84,7 +84,7 @@ get_as_atom(A, B) ->
   end.
 
 % @doc
-% Return the result of `get_env/3` as atom
+% Return the result of <tt>get_env/3</tt> as atom
 % @end
 get_as_atom(A, B, C) ->
   case get_env(A, B, C) of
@@ -93,7 +93,7 @@ get_as_atom(A, B, C) ->
   end.
 
 % @doc
-% Return the result of `get_env/1` as integer
+% Return the result of <tt>get_env/1</tt> as integer
 % @end
 get_as_integer(Path) ->
   case get_env(Path) of
@@ -102,7 +102,7 @@ get_as_integer(Path) ->
   end.
 
 % @doc
-% Return the result of `get_env/2` as integer
+% Return the result of <tt>get_env/2</tt> as integer
 % @end
 get_as_integer(A, B) ->
   case get_env(A, B) of
@@ -111,7 +111,7 @@ get_as_integer(A, B) ->
   end.
 
 % @doc
-% Return the result of `get_env/3` as integer
+% Return the result of <tt>get_env/3</tt> as integer
 % @end
 get_as_integer(A, B, C) ->
   case get_env(A, B, C) of
@@ -120,7 +120,7 @@ get_as_integer(A, B, C) ->
   end.
 
 % @doc
-% Return the result of `get_env/1` as float
+% Return the result of <tt>get_env/1</tt> as float
 % @end
 get_as_float(Path) ->
   case get_env(Path) of
@@ -129,7 +129,7 @@ get_as_float(Path) ->
   end.
 
 % @doc
-% Return the result of `get_env/2` as float
+% Return the result of <tt>get_env/2</tt> as float
 % @end
 get_as_float(A, B) ->
   case get_env(A, B) of
@@ -138,7 +138,7 @@ get_as_float(A, B) ->
   end.
 
 % @doc
-% Return the result of `get_env/3` as float
+% Return the result of <tt>get_env/3</tt> as float
 % @end
 get_as_float(A, B, C) ->
   case get_env(A, B, C) of
@@ -147,7 +147,7 @@ get_as_float(A, B, C) ->
   end.
 
 % @doc
-% Return the result of `get_env/1` as binary
+% Return the result of <tt>get_env/1</tt> as binary
 % @end
 get_as_binary(Path) ->
   case get_env(Path) of
@@ -156,7 +156,7 @@ get_as_binary(Path) ->
   end.
 
 % @doc
-% Return the result of `get_env/2` as binary
+% Return the result of <tt>get_env/2</tt> as binary
 % @end
 get_as_binary(A, B) ->
   case get_env(A, B) of
@@ -165,7 +165,7 @@ get_as_binary(A, B) ->
   end.
 
 % @doc
-% Return the result of `get_env/3` as binary
+% Return the result of <tt>get_env/3</tt> as binary
 % @end
 get_as_binary(A, B, C) ->
   case get_env(A, B, C) of
@@ -174,7 +174,7 @@ get_as_binary(A, B, C) ->
   end.
 
 % @doc
-% Return the result of `get_env/1` as list
+% Return the result of <tt>get_env/1</tt> as list
 % @end
 get_as_list(Path) ->
   case get_env(Path) of
@@ -183,7 +183,7 @@ get_as_list(Path) ->
   end.
 
 % @doc
-% Return the result of `get_env/2` as list
+% Return the result of <tt>get_env/2</tt> as list
 % @end
 get_as_list(A, B) ->
   case get_env(A, B) of
@@ -192,7 +192,7 @@ get_as_list(A, B) ->
   end.
 
 % @doc
-% Return the result of `get_env/3` as list
+% Return the result of <tt>get_env/3</tt> as list
 % @end
 get_as_list(A, B, C) ->
   case get_env(A, B, C) of
@@ -201,30 +201,42 @@ get_as_list(A, B, C) ->
   end.
 
 % @doc
-% Return the result of `get_env/1` as term
+% Return the result of <tt>get_env/1</tt> as term
 % @end
 get_as_term(Path) ->
   case get_env(Path) of
     ?UNDEFINED -> ?UNDEFINED;
-    Other -> bucs:to_term(Other)
+    Other ->
+      case bucs:to_term(Other) of
+        {ok, Term} -> Term;
+        _ -> ?UNDEFINED
+      end
   end.
 
 % @doc
-% Return the result of `get_env/2` as term
+% Return the result of <tt>get_env/2</tt> as term
 % @end
 get_as_term(A, B) ->
   case get_env(A, B) of
     ?UNDEFINED -> ?UNDEFINED;
-    Other -> bucs:to_term(Other)
+    Other ->
+      case bucs:to_term(Other) of
+        {ok, Term} -> Term;
+        _ -> ?UNDEFINED
+      end
   end.
 
 % @doc
-% Return the result of `get_env/3` as term
+% Return the result of <tt>get_env/3</tt> as term
 % @end
 get_as_term(A, B, C) ->
   case get_env(A, B, C) of
     ?UNDEFINED -> ?UNDEFINED;
-    Other -> bucs:to_term(Other)
+    Other ->
+      case bucs:to_term(Other) of
+        {ok, Term} -> Term;
+        _ -> ?UNDEFINED
+      end
   end.
 
 % @doc

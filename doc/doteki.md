@@ -14,7 +14,28 @@ Compile the configuration of the current application and all loaded applications
 Compile the configuration of the given application/s.</td></tr><tr><td valign="top"><a href="#compile_file-2">compile_file/2</a></td><td>
 Compile a configuration file and save the result in an other file.</td></tr><tr><td valign="top"><a href="#get_all_env-0">get_all_env/0</a></td><td>
 Returns the configuration parameters and their values for the application of the calling process.</td></tr><tr><td valign="top"><a href="#get_all_env-1">get_all_env/1</a></td><td>
-Returns the configuration parameters and their values for Application.</td></tr><tr><td valign="top"><a href="#get_env-1">get_env/1</a></td><td>Equivalent to <a href="#get_env-2"><tt>get_env(Path, undefined)</tt></a>.</td></tr><tr><td valign="top"><a href="#get_env-2">get_env/2</a></td><td> 
+Returns the configuration parameters and their values for Application.</td></tr><tr><td valign="top"><a href="#get_as_atom-1">get_as_atom/1</a></td><td>
+Return the result of <tt>get_env/1</tt> as atom.</td></tr><tr><td valign="top"><a href="#get_as_atom-2">get_as_atom/2</a></td><td>
+Return the result of <tt>get_env/2</tt> as atom.</td></tr><tr><td valign="top"><a href="#get_as_atom-3">get_as_atom/3</a></td><td>
+Return the result of <tt>get_env/3</tt> as atom.</td></tr><tr><td valign="top"><a href="#get_as_binary-1">get_as_binary/1</a></td><td>
+Return the result of <tt>get_env/1</tt> as binary.</td></tr><tr><td valign="top"><a href="#get_as_binary-2">get_as_binary/2</a></td><td>
+Return the result of <tt>get_env/2</tt> as binary.</td></tr><tr><td valign="top"><a href="#get_as_binary-3">get_as_binary/3</a></td><td>
+Return the result of <tt>get_env/3</tt> as binary.</td></tr><tr><td valign="top"><a href="#get_as_float-1">get_as_float/1</a></td><td>
+Return the result of <tt>get_env/1</tt> as float.</td></tr><tr><td valign="top"><a href="#get_as_float-2">get_as_float/2</a></td><td>
+Return the result of <tt>get_env/2</tt> as float.</td></tr><tr><td valign="top"><a href="#get_as_float-3">get_as_float/3</a></td><td>
+Return the result of <tt>get_env/3</tt> as float.</td></tr><tr><td valign="top"><a href="#get_as_integer-1">get_as_integer/1</a></td><td>
+Return the result of <tt>get_env/1</tt> as integer.</td></tr><tr><td valign="top"><a href="#get_as_integer-2">get_as_integer/2</a></td><td>
+Return the result of <tt>get_env/2</tt> as integer.</td></tr><tr><td valign="top"><a href="#get_as_integer-3">get_as_integer/3</a></td><td>
+Return the result of <tt>get_env/3</tt> as integer.</td></tr><tr><td valign="top"><a href="#get_as_list-1">get_as_list/1</a></td><td>
+Return the result of <tt>get_env/1</tt> as list.</td></tr><tr><td valign="top"><a href="#get_as_list-2">get_as_list/2</a></td><td>
+Return the result of <tt>get_env/2</tt> as list.</td></tr><tr><td valign="top"><a href="#get_as_list-3">get_as_list/3</a></td><td>
+Return the result of <tt>get_env/3</tt> as list.</td></tr><tr><td valign="top"><a href="#get_as_string-1">get_as_string/1</a></td><td>
+Return the result of <tt>get_env/1</tt> as string.</td></tr><tr><td valign="top"><a href="#get_as_string-2">get_as_string/2</a></td><td>
+Return the result of <tt>get_env/2</tt> as string.</td></tr><tr><td valign="top"><a href="#get_as_string-3">get_as_string/3</a></td><td>
+Return the result of <tt>get_env/3</tt> as string.</td></tr><tr><td valign="top"><a href="#get_as_term-1">get_as_term/1</a></td><td>
+Return the result of <tt>get_env/1</tt> as term.</td></tr><tr><td valign="top"><a href="#get_as_term-2">get_as_term/2</a></td><td>
+Return the result of <tt>get_env/2</tt> as term.</td></tr><tr><td valign="top"><a href="#get_as_term-3">get_as_term/3</a></td><td>
+Return the result of <tt>get_env/3</tt> as term.</td></tr><tr><td valign="top"><a href="#get_env-1">get_env/1</a></td><td>Equivalent to <a href="#get_env-2"><tt>get_env(Path, undefined)</tt></a>.</td></tr><tr><td valign="top"><a href="#get_env-2">get_env/2</a></td><td> 
 Return the evironment value from the environment variable, or the configuration file, or 
 the default value.</td></tr><tr><td valign="top"><a href="#get_env-3">get_env/3</a></td><td> 
 Return the evironment value from the environment variable, or the configuration file, or 
@@ -84,6 +105,174 @@ get_all_env(Application::atom()) -&gt; [term()]
 <br />
 
 Returns the configuration parameters and their values for Application.
+
+<a name="get_as_atom-1"></a>
+
+### get_as_atom/1 ###
+
+`get_as_atom(Path) -> any()`
+
+Return the result of `get_env/1` as atom
+
+<a name="get_as_atom-2"></a>
+
+### get_as_atom/2 ###
+
+`get_as_atom(A, B) -> any()`
+
+Return the result of `get_env/2` as atom
+
+<a name="get_as_atom-3"></a>
+
+### get_as_atom/3 ###
+
+`get_as_atom(A, B, C) -> any()`
+
+Return the result of `get_env/3` as atom
+
+<a name="get_as_binary-1"></a>
+
+### get_as_binary/1 ###
+
+`get_as_binary(Path) -> any()`
+
+Return the result of `get_env/1` as binary
+
+<a name="get_as_binary-2"></a>
+
+### get_as_binary/2 ###
+
+`get_as_binary(A, B) -> any()`
+
+Return the result of `get_env/2` as binary
+
+<a name="get_as_binary-3"></a>
+
+### get_as_binary/3 ###
+
+`get_as_binary(A, B, C) -> any()`
+
+Return the result of `get_env/3` as binary
+
+<a name="get_as_float-1"></a>
+
+### get_as_float/1 ###
+
+`get_as_float(Path) -> any()`
+
+Return the result of `get_env/1` as float
+
+<a name="get_as_float-2"></a>
+
+### get_as_float/2 ###
+
+`get_as_float(A, B) -> any()`
+
+Return the result of `get_env/2` as float
+
+<a name="get_as_float-3"></a>
+
+### get_as_float/3 ###
+
+`get_as_float(A, B, C) -> any()`
+
+Return the result of `get_env/3` as float
+
+<a name="get_as_integer-1"></a>
+
+### get_as_integer/1 ###
+
+`get_as_integer(Path) -> any()`
+
+Return the result of `get_env/1` as integer
+
+<a name="get_as_integer-2"></a>
+
+### get_as_integer/2 ###
+
+`get_as_integer(A, B) -> any()`
+
+Return the result of `get_env/2` as integer
+
+<a name="get_as_integer-3"></a>
+
+### get_as_integer/3 ###
+
+`get_as_integer(A, B, C) -> any()`
+
+Return the result of `get_env/3` as integer
+
+<a name="get_as_list-1"></a>
+
+### get_as_list/1 ###
+
+`get_as_list(Path) -> any()`
+
+Return the result of `get_env/1` as list
+
+<a name="get_as_list-2"></a>
+
+### get_as_list/2 ###
+
+`get_as_list(A, B) -> any()`
+
+Return the result of `get_env/2` as list
+
+<a name="get_as_list-3"></a>
+
+### get_as_list/3 ###
+
+`get_as_list(A, B, C) -> any()`
+
+Return the result of `get_env/3` as list
+
+<a name="get_as_string-1"></a>
+
+### get_as_string/1 ###
+
+`get_as_string(Path) -> any()`
+
+Return the result of `get_env/1` as string
+
+<a name="get_as_string-2"></a>
+
+### get_as_string/2 ###
+
+`get_as_string(A, B) -> any()`
+
+Return the result of `get_env/2` as string
+
+<a name="get_as_string-3"></a>
+
+### get_as_string/3 ###
+
+`get_as_string(A, B, C) -> any()`
+
+Return the result of `get_env/3` as string
+
+<a name="get_as_term-1"></a>
+
+### get_as_term/1 ###
+
+`get_as_term(Path) -> any()`
+
+Return the result of `get_env/1` as term
+
+<a name="get_as_term-2"></a>
+
+### get_as_term/2 ###
+
+`get_as_term(A, B) -> any()`
+
+Return the result of `get_env/2` as term
+
+<a name="get_as_term-3"></a>
+
+### get_as_term/3 ###
+
+`get_as_term(A, B, C) -> any()`
+
+Return the result of `get_env/3` as term
 
 <a name="get_env-1"></a>
 
