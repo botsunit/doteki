@@ -48,11 +48,11 @@ t_default() ->
   ?assertEqual(app1value22, doteki:get_env([app1, app1key2, app1key22])).
 
 t_envvar() ->
-  os:putenv("APP1_APP1KEY2_APP1KEY22", "overloaded_app1value22"),
+  os:putenv("APP1_APP1KEY2_APP1KEY22", "\"overloaded_app1value22\""),
   ?assertEqual("overloaded_app1value22", doteki:get_env([app1, app1key2, app1key22])),
 
   ?assertEqual(undefined, doteki:get_env([app2, app2key2, app2key21])),
-  os:putenv("MY_CUSTOM_ENV_VAR", "forced_app2value21"),
+  os:putenv("MY_CUSTOM_ENV_VAR", "\"forced_app2value21\""),
   ?assertEqual("forced_app2value21", doteki:get_env([app2, app2key2, app2key21])),
   os:putenv("MY_CUSTOM_ENV_VAR", "forced_app2value21:blabla"),
   ?assertEqual("forced_app2value21:blabla", doteki:get_env([app2, app2key2, app2key21])),
@@ -87,9 +87,7 @@ t_envvar_untype() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "{atom, \"string\", [1,2,3,4]}"),
   ?assertEqual({atom, "string", [1,2,3,4]}, doteki:get_as_term([app2, app2key2, app2key21])),
   os:putenv("MY_CUSTOM_ENV_VAR", "[1,2,3,4]"),
-  ?assertEqual([1,2,3,4], doteki:get_as_term([app2, app2key2, app2key21])),
-  os:putenv("MY_CUSTOM_ENV_VAR", "[102, 101, 108, 108, 111]"),
-  ?assertEqual([102, 101, 108, 108, 111], doteki:get_as_term([app2, app2key2, app2key21])).
+  ?assertEqual([1,2,3,4], doteki:get_as_term([app2, app2key2, app2key21])).
 
 t_envvar_forcetype() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "atom_value:atom"),

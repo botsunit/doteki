@@ -54,12 +54,12 @@ doteki_update_test_() ->
         ?assertEqual(value1, doteki:get_env([app, key1])),
         ?assertEqual(124, doteki:get_env([app, key2, key21])),
         ?assertEqual(undefined, doteki:get_env([app, key2, key22])),
-        os:putenv("MY_CUSTOM_ENV_VAR1", "value22"),
+        os:putenv("MY_CUSTOM_ENV_VAR1", "\"value22\""),
         ?assertEqual("value22", doteki:get_env([app, key2, key22])),
         ?assertEqual(value23, doteki:get_env([app, key2, key23])),
         ?assertEqual(125, doteki:get_env([app, key3])),
         ?assertEqual(undefined, doteki:get_env([app, key4])),
-        os:putenv("MY_CUSTOM_ENV_VAR2", "value4"),
+        os:putenv("MY_CUSTOM_ENV_VAR2", "\"value4\""),
         ?assertEqual("value4", doteki:get_env([app, key4]))
     end
     , fun() ->
@@ -69,12 +69,12 @@ doteki_update_test_() ->
         ?assertEqual(value1, doteki:get_env([app, key1])),
         ?assertEqual(126, doteki:get_env([app, key2, key21])),
         ?assertEqual(undefined, doteki:get_env([app, key2, key22])),
-        os:putenv("MY_CUSTOM_ENV_VAR3", "value22"),
+        os:putenv("MY_CUSTOM_ENV_VAR3", "\"value22\""),
         ?assertEqual("value22", doteki:get_env([app, key2, key22])),
         ?assertEqual(value23, doteki:get_env([app, key2, key23])),
         ?assertEqual(127, doteki:get_env([app, key3])),
         ?assertEqual(undefined, doteki:get_env([app, key4])),
-        os:putenv("MY_CUSTOM_ENV_VAR4", "value4"),
+        os:putenv("MY_CUSTOM_ENV_VAR4", "\"value4\""),
         ?assertEqual("value4", doteki:get_env([app, key4]))
     end
     , fun() ->
@@ -84,12 +84,12 @@ doteki_update_test_() ->
         ?assertEqual(undefined, doteki:get_env([app, key1])),
         ?assertEqual(126, doteki:get_env([app, key2, key21])),
         ?assertEqual(undefined, doteki:get_env([app, key2, key22])),
-        os:putenv("MY_CUSTOM_ENV_VAR5", "value22"),
+        os:putenv("MY_CUSTOM_ENV_VAR5", "\"value22\""),
         ?assertEqual("value22", doteki:get_env([app, key2, key22])),
         ?assertEqual(undefined, doteki:get_env([app, key2, key23])),
         ?assertEqual(127, doteki:get_env([app, key3])),
         ?assertEqual(undefined, doteki:get_env([app, key4])),
-        os:putenv("MY_CUSTOM_ENV_VAR6", "value4"),
+        os:putenv("MY_CUSTOM_ENV_VAR6", "\"value4\""),
         ?assertEqual("value4", doteki:get_env([app, key4]))
     end
    ].

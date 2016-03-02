@@ -283,7 +283,7 @@ get_env(Path) when is_list(Path) ->
 %
 % Calling <tt>doteki:get_env([app, keyone, keytwo], "default")</tt> return :
 % <ul>
-%   <li>the value  of the environment variable <tt>APP_KEYONE_KEYTWO</tt> of it exists</li>
+%   <li>the value of the environment variable <tt>APP_KEYONE_KEYTWO</tt> of it exists</li>
 %   <li>else the value for <tt>keytwo</tt> in the dict returned by <tt>keyone</tt> for the <tt>app</tt></li>
 %   <li>else <tt>"default"</tt></li>
 % </ul>
@@ -390,7 +390,7 @@ os_get_env(Var, Default) ->
             {match,[_, Value1, Type]} ->
               to_value(Value1, bucs:to_atom(Type));
             _ ->
-              Value
+              to_value(Value, term)
           end;
         _ ->
           Value
