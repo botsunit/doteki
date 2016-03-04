@@ -386,7 +386,7 @@ os_get_env(Var, Default) ->
     Value when is_list(Value), Value =/= Default ->
       case bucs:is_string(Value) of
         true ->
-          case re:run(Value, "(.*):(\[^:\]*)", [{capture, all, list}]) of
+          case re:run(Value, "(.*):(atom|string|binary|integer|float|term)$", [{capture, all, list}]) of
             {match,[_, Value1, Type]} ->
               to_value(Value1, bucs:to_atom(Type));
             _ ->
@@ -404,16 +404,19 @@ to_value(V, binary) -> bucs:to_binary(V);
 to_value(V, integer) -> bucs:to_integer(V);
 to_value(V, float) -> bucs:to_float(V);
 to_value(V, term) ->
-  V1 = case lists:reverse(V) of
-         [$.|_] -> V;
-         _ -> V ++ "."
-       end,
-  {ok, Tokens, _} = erl_scan:string(V1),
-  case erl_parse:parse_term(Tokens) of
-    {ok, Term} -> Term;
-    _ -> ?UNDEFINED
-  end;
-to_value(V, T) -> V ++ ":" ++ bucs:to_string(T).
+  case bucs:to_term(V) of
+    {ok, T} -> T;
+    _ -> V
+  end.
+%  V1 = case lists:reverse(V) of
+%         [$.|_] -> V;
+%         _ -> V ++ "."
+%       end,
+%  {ok, Tokens, _} = erl_scan:string(V1),
+%  case erl_parse:parse_term(Tokens) of
+%    {ok, Term} -> Term;
+%    _ -> ?UNDEFINED
+%  end.
 
 % @doc
 % Return the evironment value from the environment variable, or the configuration file, or
