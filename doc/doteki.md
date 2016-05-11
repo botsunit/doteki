@@ -306,7 +306,7 @@ value for the `key` for the `app` in the configuration.
 
 Calling `doteki:get_env([app, keyone, keytwo], "default")` return :
 
-* the value  of the environment variable `APP_KEYONE_KEYTWO` of it exists
+* the value of the environment variable `APP_KEYONE_KEYTWO` of it exists
 
 * else the value for `keytwo` in the dict returned by `keyone` for the `app`
 

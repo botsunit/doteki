@@ -35,6 +35,7 @@ doteki_test_() ->
     , ?_test(t_fun())
     , ?_test(t_multi())
     , ?_test(t_multienv())
+    , ?_test(t_load_config())
    ]}.
 
 setup() ->
@@ -126,6 +127,22 @@ t_multienv() ->
   ?assertEqual(app1value1, doteki:get_env([[a, b], [app1, app1key1], [c, d]], undefined)),
   ?assertEqual(app1value1, doteki:get_env([[a, b], [c, d], [app1, app1key1]], undefined)),
   ?assertEqual(default, doteki:get_env([[a, b], [c, d], [e, f]], default)).
+
+t_load_config() ->
+  ?assertEqual(ok, doteki:set_env_from_file("test/root.config")),
+  ?assertMatch([
+                {app1_key1, app1_value1},
+                {app1_key2, app1_new_value2}
+               ],
+               doteki:get_all_env(app1)),
+  ?assertMatch([
+                {app2_key1, app2_value1}
+               ],
+               doteki:get_all_env(app2)),
+  ?assertMatch([
+                {app3_key1, app3_value1}
+               ],
+               doteki:get_all_env(app3)).
 
 function() -> 123.
 function(A) -> A * 2.

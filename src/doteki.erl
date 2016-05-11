@@ -256,7 +256,8 @@ get_all_env() ->
 get_all_env(Application) ->
   get_all_env(application:get_all_env(Application), [Application], []).
 
-get_all_env([], _, Result) -> lists:reverse(Result);
+get_all_env([], _, Result) ->
+  lists:reverse(Result);
 get_all_env([{Key, Value}|Rest], Path, Result) ->
   case is_list(Value) and not bucs:is_string(Value) of
     true ->
@@ -481,11 +482,11 @@ set_env(AppName, [{Key, Value}|Config]) ->
 % @end
 -spec set_env_from_file(file:filename()) -> ok | {error, any()}.
 set_env_from_file(File) ->
-  case file:consult(File) of
-    {ok, [Terms]} ->
+  case load_config_file(File) of
+    {ok, Terms} ->
       set_env_from_config(Terms);
-    E ->
-      E
+    {error, _, E} ->
+      {error, E}
   end.
 
 % @doc
@@ -594,6 +595,53 @@ compile(App) when is_atom(App) ->
   case set_env_from_config([{App, Terms}]) of
     ok -> ok;
     {error, _} -> {error, App}
+  end.
+
+load_config_file(File) ->
+  case file:consult(File) of
+    {ok, [Data]} -> check_config(Data);
+    {error, Error} -> {error, File, Error}
+  end.
+
+check_config(Data) ->
+  check_config(Data, []).
+check_config([], Acc) ->
+  {ok, merge_config(Acc)};
+check_config([File|Rest], Acc) when is_list(File) ->
+  case load_config_file(File) of
+    {ok, Data} ->
+      check_config(Rest, lists:reverse(Data) ++ Acc);
+    Error ->
+      Error
+  end;
+check_config([Term|Rest], Acc) ->
+  check_config(Rest, [Term|Acc]).
+
+merge_config(Data) ->
+  lists:foldl(fun({App, Values} = T, Acc) ->
+                  case lists:keyfind(App, 1, Acc) of
+                    {App, ExistingValues} ->
+                      lists:keyreplace(App, 1, Acc, {App, merge_values(Values, ExistingValues)});
+                    false ->
+                      [T|Acc]
+                  end
+              end, [], Data).
+
+merge_values([], Acc) ->
+  Acc;
+merge_values([Value|Rest], Acc) when is_tuple(Value) ->
+  case lists:keyfind(erlang:element(1, Value), 1, Acc) of
+    false ->
+      merge_values(Rest, [Value|Acc]);
+    _ ->
+      merge_values(Rest, Acc)
+  end;
+merge_values([Value|Rest], Acc) ->
+  case lists:member(Value, Acc) of
+    true ->
+      merge_values(Rest, Acc);
+    false ->
+      merge_values(Rest, [Value|Acc])
   end.
 
 compile_to_term(Term) ->
