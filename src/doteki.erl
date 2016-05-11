@@ -34,6 +34,7 @@
          , compile_file/2
          , compile/0
          , compile/1
+         , reload_env/0
         ]).
 
 -define(UNDEFINED, undefined).
@@ -596,6 +597,20 @@ compile(App) when is_atom(App) ->
     ok -> ok;
     {error, _} -> {error, App}
   end.
+
+% @doc
+% Reload the configuration file passed to the VM (<tt>-config</tt> option)
+% @end
+-spec reload_env() -> ok | {error, any()}.
+reload_env() ->
+  case init:get_argument(config) of
+    {ok, [[File]]} ->
+      set_env_from_config(File);
+    _ ->
+      {error, missing_config}
+  end.
+
+% -- private functions --
 
 load_config_file(File) ->
   case file:consult(File) of

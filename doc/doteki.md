@@ -39,7 +39,8 @@ Return the result of <tt>get_env/3</tt> as term.</td></tr><tr><td valign="top"><
 Return the evironment value from the environment variable, or the configuration file, or 
 the default value.</td></tr><tr><td valign="top"><a href="#get_env-3">get_env/3</a></td><td> 
 Return the evironment value from the environment variable, or the configuration file, or 
-the default value.</td></tr><tr><td valign="top"><a href="#set_env-2">set_env/2</a></td><td> 
+the default value.</td></tr><tr><td valign="top"><a href="#reload_env-0">reload_env/0</a></td><td>
+Reload the configuration file passed to the VM (<tt>-config</tt> option).</td></tr><tr><td valign="top"><a href="#set_env-2">set_env/2</a></td><td> 
 Load a configuration for the given app with the given configuration.</td></tr><tr><td valign="top"><a href="#set_env_from_config-1">set_env_from_config/1</a></td><td> 
 Load an application configuration from the given configuration.</td></tr><tr><td valign="top"><a href="#set_env_from_file-1">set_env_from_file/1</a></td><td> 
 Load an application configuration from the given config file.</td></tr><tr><td valign="top"><a href="#unset_env-1">unset_env/1</a></td><td>
@@ -340,6 +341,17 @@ Calling `doteki:get_env([app, keyone, keytwo], "default")` return :
 
 * else `"default"`
 
+
+<a name="reload_env-0"></a>
+
+### reload_env/0 ###
+
+<pre><code>
+reload_env() -&gt; ok | {error, any()}
+</code></pre>
+<br />
+
+Reload the configuration file passed to the VM (`-config` option)
 
 <a name="set_env-2"></a>
 
