@@ -2,9 +2,9 @@
 
 # Dōteki #
 
-Copyright (c) 2015 Bots Unit
+Copyright (c) 2015, 2016 Bots Unit
 
-__Version:__ 1.0.0
+__Version:__ 0.0.1
 
 __Authors:__ Gregoire Lejeune ([`gregoire.lejeune@botsunit.com`](mailto:gregoire.lejeune@botsunit.com)).
 
@@ -17,7 +17,7 @@ __Dōteki__ allow you to use dynamic configuration in your erlang application.
 
 ## Licence ##
 
-Copyright (c) 2015, Bots Unit<br />
+Copyright (c) 2015, 2016, Bots Unit<br />
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

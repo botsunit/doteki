@@ -1,6 +1,6 @@
 @author Gregoire Lejeune <gregoire.lejeune@botsunit.com>
-@copyright 2015 Bots Unit
-@version 1.0.0
+@copyright 2015, 2016 Bots Unit
+@version 0.0.1
 @title Dōteki
 @doc
 <h2>About</h2>
@@ -9,7 +9,7 @@
 
 <h2>Licence</h2>
 
-<p>Copyright (c) 2015, Bots Unit<br />
+<p>Copyright (c) 2015, 2016, Bots Unit<br />
 All rights reserved.</p>
 
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
