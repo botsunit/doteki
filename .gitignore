@@ -13,4 +13,5 @@ erl_crash.dump
 .erlang.mk
 *.d
 xrefr
-test/TEST-*.xml
+test/eunit/
+_build/
