@@ -1,6 +1,6 @@
 {application, doteki, [
 	{description, "A more dynamic sys.config"},
-	{vsn, "0.0.2"},
+	{vsn, "0.1.0"},
 	{modules, []},
 	{registered, []},
 	{applications, [kernel,stdlib]}
