@@ -130,11 +130,11 @@ t_multienv() ->
 
 t_load_config() ->
   ?assertEqual(ok, doteki:set_env_from_file("test/root.config")),
-  ?assertMatch([
-                {app1_key2, app1_new_value2},
-                {app1_key1, app1_value1}
-               ],
-               doteki:get_all_env(app1)),
+  Result = doteki:get_all_env(app1),
+  ?assert(is_list(Result) == true),
+  ?assertEqual(2, erlang:length(Result)),
+  ?assertMatch({app1_key1, app1_value1}, lists:keyfind(app1_key1, 1, Result)),
+  ?assertMatch({app1_key2, app1_new_value2}, lists:keyfind(app1_key2, 1, Result)),
   ?assertMatch([
                 {app2_key1, app2_value1}
                ],
