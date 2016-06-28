@@ -1,5 +1,4 @@
 .PHONY: doc
-REBAR = $(shell { command -v ./rebar3 || command -v rebar3 } 2> /dev/null)
 FIND_REBAR = \
                 REBAR_BIN=; \
                 for x in ./rebar3 rebar3; do \
