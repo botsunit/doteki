@@ -1,7 +1,19 @@
 {application, doteki, [
-	{description, "A more dynamic sys.config"},
-	{vsn, "0.1.1"},
-	{modules, []},
-	{registered, []},
-	{applications, [kernel,stdlib]}
+	  {description, "Dynamic configuration in your erlang application"}
+	, {vsn, "0.1.1"}
+	, {modules, []}
+	, {registered, []}
+	, {applications, [kernel,stdlib]}
+
+  , {maintainers, ["Gregoire Lejeune"]}
+  , {licenses, ["BSD-3"]}
+  , {links, [{"Github", "https://github.com/botsunit/doteki"}]}
+  , {files, ["src/*"
+             , "Makefile"
+             , "README.md"
+             , "rebar.config"
+             , "rebar.lock"
+             , "mix.exs"
+             , "mix.lock"]}
+  , {build_tools, ["rebar3", "mix", "make"]}
 ]}.

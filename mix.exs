@@ -21,7 +21,7 @@ defmodule Doteki.Mixfile do
 
   defp deps do
     [
-      {:bucs, git: "https://github.com/botsunit/bucs.git", tag: "0.0.2"}    
+      {:bucs, "~> 0.1.0"}    
     ]
   end
 end

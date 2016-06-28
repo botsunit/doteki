@@ -4,7 +4,7 @@
 
 Copyright (c) 2015, 2016 Bots Unit
 
-__Version:__ 0.0.2
+__Version:__ 0.1.1
 
 __Authors:__ Gregoire Lejeune ([`gregoire.lejeune@botsunit.com`](mailto:gregoire.lejeune@botsunit.com)).
 
