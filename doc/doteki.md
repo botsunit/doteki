@@ -41,9 +41,10 @@ the default value.</td></tr><tr><td valign="top"><a href="#get_env-3">get_env/3<
 Return the evironment value from the environment variable, or the configuration file, or 
 the default value.</td></tr><tr><td valign="top"><a href="#reload_env-0">reload_env/0</a></td><td>
 Reload the configuration file passed to the VM (<tt>-config</tt> option).</td></tr><tr><td valign="top"><a href="#set_env-2">set_env/2</a></td><td> 
-Load a configuration for the given app with the given configuration.</td></tr><tr><td valign="top"><a href="#set_env_from_config-1">set_env_from_config/1</a></td><td> 
+Load a configuration for the given app with the given configuration.</td></tr><tr><td valign="top"><a href="#set_env-3">set_env/3</a></td><td>
+Sets the value of configuration parameter <tt>Key</tt> for <tt>App</tt>.</td></tr><tr><td valign="top"><a href="#set_env_from_config-1">set_env_from_config/1</a></td><td> 
 Load an application configuration from the given configuration.</td></tr><tr><td valign="top"><a href="#set_env_from_file-1">set_env_from_file/1</a></td><td> 
-Load an application configuration from the given config file.</td></tr><tr><td valign="top"><a href="#unset_env-1">unset_env/1</a></td><td>
+Load an application configuration from the given config file.</td></tr><tr><td valign="top"><a href="#test_fun-1">test_fun/1</a></td><td></td></tr><tr><td valign="top"><a href="#unset_env-1">unset_env/1</a></td><td>
 Remove the configuration parameters and its value for the <tt>Application</tt> or the
 given <tt>Path</tt></td></tr></table>
 
@@ -56,10 +57,7 @@ given <tt>Path</tt></td></tr></table>
 
 ### compile/0 ###
 
-<pre><code>
-compile() -&gt; ok | {error, [atom()]}
-</code></pre>
-<br />
+`compile() -> any()`
 
 Compile the configuration of the current application and all loaded applications.
 
@@ -67,10 +65,7 @@ Compile the configuration of the current application and all loaded applications
 
 ### compile/1 ###
 
-<pre><code>
-compile(Apps::atom() | [atom()]) -&gt; ok | {error, atom()} | {error, [atom()]}
-</code></pre>
-<br />
+`compile(Apps) -> any()`
 
 Compile the configuration of the given application/s
 
@@ -279,10 +274,7 @@ Return the result of `get_env/3` as term
 
 ### get_env/1 ###
 
-<pre><code>
-get_env(Path::[atom()]) -&gt; undefined | term()
-</code></pre>
-<br />
+`get_env(Path) -> any()`
 
 Equivalent to [`get_env(Path, undefined)`](#get_env-2).
 
@@ -358,7 +350,7 @@ Reload the configuration file passed to the VM (`-config` option)
 ### set_env/2 ###
 
 <pre><code>
-set_env(AppName::atom(), Config::[term()]) -&gt; ok | {error, any()}
+set_env(App::atom(), Rest::[term()]) -&gt; ok | {error, any()}
 </code></pre>
 <br />
 
@@ -376,7 +368,32 @@ Example :
 
 WARNING :
 
-Call this function *after* loading your application. This is not mandatory but the
+Call this function __after__ loading your application. This is not mandatory but the
+environment defined in the app file won't be loaded if an other env was loaded before.
+
+<a name="set_env-3"></a>
+
+### set_env/3 ###
+
+<pre><code>
+set_env(App::atom(), Key::atom(), Value::term()) -&gt; ok
+</code></pre>
+<br />
+
+Sets the value of configuration parameter `Key` for `App`.
+
+Example :
+
+```erlang
+
+ undefined = application:get_env(test, key).
+ doteki:set_env(test, key, "value").
+ {ok, Value} = application:get_env(test, key).
+```
+
+WARNING :
+
+Call this function __after__ loading your application. This is not mandatory but the
 environment defined in the app file won't be loaded if an other env was loaded before.
 
 <a name="set_env_from_config-1"></a>
@@ -402,17 +419,14 @@ Example :
 
 WARNING :
 
-Call this function *after* loading your application. This is not mandatory but the
+Call this function __after__ loading your application. This is not mandatory but the
 environment defined in the app file won't be loaded if an other env was loaded before.
 
 <a name="set_env_from_file-1"></a>
 
 ### set_env_from_file/1 ###
 
-<pre><code>
-set_env_from_file(File::<a href="file.md#type-filename">file:filename()</a>) -&gt; ok | {error, any()}
-</code></pre>
-<br />
+`set_env_from_file(File) -> any()`
 
 
 Load an application configuration from the given config file
@@ -428,8 +442,14 @@ Example :
 
 WARNING :
 
-Call this function *after* loading your application. This is not mandatory but the
+Call this function __after__ loading your application. This is not mandatory but the
 environment defined in the app file won't be loaded if an other env was loaded before.
+
+<a name="test_fun-1"></a>
+
+### test_fun/1 ###
+
+`test_fun(X) -> any()`
 
 <a name="unset_env-1"></a>
 
