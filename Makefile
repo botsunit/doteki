@@ -25,22 +25,22 @@ tests:
 doc:
 	@$(REBAR) as doc edoc
 
-dist: dist-ex dist-erl doc
+dist: dist-erl dist-ex doc
 
-release: dist-ex dist-erl
+release: dist
 	@$(REBAR) hex publish
 
-dist-erl: distclean-erl compile-erl tests
+dist-erl: compile-erl tests
 
-distclean-erl: distclean
+distclean-erl:
 	@rm -f rebar.lock
 
-dist-ex: distclean-ex compile-ex
+dist-ex: compile-ex
 
-distclean-ex: distclean
+distclean-ex:
 	@rm -f mix.lock
 
-distclean:
+distclean: distclean-erl distclean-ex
 	@rm -rf _build test/eunit deps ebin
 
 dev: compile-erl
