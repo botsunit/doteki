@@ -7,7 +7,7 @@
 
 <b>Dōteki</b> allow you to use dynamic configuration in your erlang application.
 
-<h2>Using environment variable</h2>
+<h2>Using environment variables</h2>
 
 In your configuration file, you can declare an explicit usage of en environment variable.
 
@@ -91,9 +91,7 @@ config :app,
 
 If you set an environment variable <tt>APP_KEY2</tt> and get the value for <tt>[app, key2]</tt> Dōteki will return defined by <tt>APP_KEY2</tt>.
 
-<blockquote>
 <b>WARNING</b> : The environment variables overwriting a key by its path are interpreted before those declares in the configuration. So if you export <tt>APP_KEY1</tt>, the value returned for <tt>[app, key1]</tt> will be the value exported for this variable.
-</blockquote>
 
 When Dōteki find an environment it will try to interpret it.
 
@@ -107,6 +105,42 @@ When Dōteki find an environment it will try to interpret it.
 <tr><td>Tuple</td><td><tt>"{a, \"b\", 123}"</tt><br /><tt>"{a, \"b\", 123}:term"</tt></td><td><tt>{a, "b", 123}</tt></td><td><tt>{:a, 'b', 123}</tt></td></tr>
 <tr><td>List</td><td><tt>"[a, \"b\", 123]"</tt><br /><tt>"[a, \"b\", 123]:term"</tt></td><td><tt>[a, "b", 123]</tt></td><td><tt>[:a, 'b', 123]</tt></td></tr>
 </table>
+
+<h2>Using functions</h2>
+
+If you want to use a function, you can use those notations :
+
+<ul>
+<li><tt>{fn, Module, Function}</tt></li>
+<li><tt>{fn, Module, Function, [Args]}</tt></li>
+<li><tt>{fn, Module, Function, Arity, [Args]}</tt></li>
+<li><tt>{'fun', Module, Function}</tt></li>
+<li><tt>{'fun', Module, Function, [Args]}</tt></li>
+<li><tt>{'fun', Module, Function, Arity, [Args]}</tt></li>
+<li><tt>'fun.Module:Function'</tt></li>
+<li><tt>{'fun.Module:Function', [Args]}</tt></li>
+<li><tt>{'fun.Module:Function/Arity', [Args]}</tt></li>
+<li><tt>'fn.Module:Function'</tt></li>
+<li><tt>{'fn.Module:Function', [Args]}</tt></li>
+<li><tt>{'fn.Module:Function/Arity', [Args]}</tt></li>
+</ul>
+
+Erlang :
+<pre>
+[
+  {app, [
+    {key, {fn, module, function, 2, [{system, "ENV_VAR"}, 2]}}
+  ]}
+].
+</pre>
+
+Elixir :
+<pre>
+use Mix.Config
+
+config :app,
+  key: {:fn, Module, :function, 2, [{:system, "ENV_VAR"}, 2]}
+</pre>
 
 <h2>Licence</h2>
 

@@ -15,7 +15,7 @@ __Authors:__ Gregoire Lejeune ([`gregoire.lejeune@botsunit.com`](mailto:gregoire
 __Dōteki__ allow you to use dynamic configuration in your erlang application.
 
 
-## Using environment variable ##
+## Using environment variables ##
 
 In your configuration file, you can declare an explicit usage of en environment variable.
 
@@ -119,9 +119,7 @@ config :app,
 
 If you set an environment variable `APP_KEY2` and get the value for `[app, key2]` Dōteki will return defined by `APP_KEY2`.
 
-<blockquote>
 __WARNING__ : The environment variables overwriting a key by its path are interpreted before those declares in the configuration. So if you export `APP_KEY1`, the value returned for `[app, key1]` will be the value exported for this variable.
-</blockquote>
 
 When Dōteki find an environment it will try to interpret it.
 
@@ -137,6 +135,57 @@ When Dōteki find an environment it will try to interpret it.
 <tr><td>List</td><td><tt>"[a, \"b\", 123]"</tt><br /><tt>"[a, \"b\", 123]:term"</tt></td><td><tt>[a, "b", 123]</tt></td><td><tt>[:a, 'b', 123]</tt></td></tr>
 </table>
 
+
+
+## Using functions ##
+
+If you want to use a function, you can use those notations :
+
+* `{fn, Module, Function}`
+
+* `{fn, Module, Function, [Args]}`
+
+* `{fn, Module, Function, Arity, [Args]}`
+
+* `{'fun', Module, Function}`
+
+* `{'fun', Module, Function, [Args]}`
+
+* `{'fun', Module, Function, Arity, [Args]}`
+
+* `'fun.Module:Function'`
+
+* `{'fun.Module:Function', [Args]}`
+
+* `{'fun.Module:Function/Arity', [Args]}`
+
+* `'fn.Module:Function'`
+
+* `{'fn.Module:Function', [Args]}`
+
+* `{'fn.Module:Function/Arity', [Args]}`
+
+Erlang :
+
+```
+
+[
+  {app, [
+    {key, {fn, module, function, 2, [{system, "ENV_VAR"}, 2]}}
+  ]}
+].
+
+```
+Elixir :
+
+```
+
+use Mix.Config
+
+config :app,
+  key: {:fn, Module, :function, 2, [{:system, "ENV_VAR"}, 2]}
+
+```
 
 
 ## Licence ##
