@@ -45,12 +45,19 @@
 -endif.
 
 % @hidden
-main([In, Out]) ->
-  compile_file(In, Out);
+main([In, Out|PA]) ->
+  [code:add_patha(D) || D <- PA],
+  case compile_file(In, Out) of
+    ok ->
+      erlang:halt(0);
+    {error, Error} ->
+      io:format("Compilation faild: ~p~n", [Error]),
+      erlang:halt(1)
+  end;
 main(_) ->
   application:load(?MODULE),
   {ok, Vsn} = application:get_key(?MODULE, vsn),
-  io:format("~s ~s~n~nUsage: ~s <in.config> <out.config>~n", [?MODULE, Vsn, ?MODULE]).
+  io:format("~s ~s~n~nUsage: ~s <in.config> <out.config> [<ebin paths>, ...]~n", [?MODULE, Vsn, ?MODULE]).
 
 % @doc
 % Sets the value of configuration parameter <tt>Key</tt> for <tt>App</tt>.
@@ -500,16 +507,53 @@ get_as_term(A, B, C) ->
 -spec compile_file(file:filename(), file:filename()) -> ok | {error, term()}.
 compile_file(In, Out) ->
   case load_config_file(In) of
-    {ok, Terms} ->
-      case compile_term(Terms) of
+    {ok, Apps} ->
+      case lists:foldl(fun
+                         (_, {error, Error}) ->
+                           {error, Error};
+                         (App, {ok, Acc}) ->
+                           case compile_app(App) of
+                             {ok, Result} ->
+                               {ok, [Result|Acc]};
+                             Error ->
+                               Error
+                           end
+                       end, {ok, []}, Apps) of
         {ok, Compiled} ->
           file:write_file(Out, format([get_all_os_env(Compiled)]));
-        undefined ->
-          {error, invalid_config}
+        Error ->
+          Error
       end;
     {error, _, E} ->
       {error, E}
   end.
+
+compile_app({App, Terms}) ->
+  case lists:foldl(fun
+                     (_, {error, Error}) ->
+                       {error, Error};
+                     (Term, {ok, Acc}) ->
+                       case compile_terms(Term) of
+                         {ok, Result} ->
+                           {ok, [Result|Acc]};
+                         Error ->
+                           Error
+                       end
+                   end, {ok, []}, Terms) of
+    {ok, CompiledTerms} ->
+      {ok, {App, lists:reverse(CompiledTerms)}};
+    Error ->
+      Error
+  end.
+
+compile_terms({Key, Value}) ->
+  case compile_term(Value) of
+    {ok, Result} ->
+      {ok, {Key, Result}};
+    Error ->
+      Error
+  end.
+
 
 % Private
 

@@ -11,7 +11,8 @@
                               {key23, value23}
                              ]},
                       {key3, {'fun.doteki_rebuild_tests:function2/1', [123]}},
-                      {key4, 'env.MY_REBUILD_TESTS_ENV_VAR2'}
+                      {key4, 'env.MY_REBUILD_TESTS_ENV_VAR2'},
+                      {env, {system, "HOME"}}
                      ]}
               ]).
 
@@ -34,7 +35,8 @@ doteki_update_test_() ->
         ?assertEqual(125, doteki:get_env([appcomp, key3])),
         ?assertEqual(undefined, doteki:get_env([appcomp, key4])),
         os:putenv("MY_REBUILD_TESTS_ENV_VAR2", "\"value4\""),
-        ?assertEqual("value4", doteki:get_env([appcomp, key4]))
+        ?assertEqual("value4", doteki:get_env([appcomp, key4])),
+        ?assertEqual(os:getenv("HOME"), doteki:get_env([appcomp, env]))
     end
     , fun() ->
         os:putenv("MY_REBUILD_TESTS_ENV_VAR1", "compiled1"),
@@ -42,6 +44,8 @@ doteki_update_test_() ->
         os:putenv("APPCOMP_KEY1", "value_set_by_env:atom"),
         os:putenv("APPCOMP_KEY2_KEY23", "second_value_set_by_env:binary"),
         ?assertEqual(ok, doteki:compile(appcomp)),
+        os:putenv("MY_REBUILD_TESTS_ENV_VAR1", "error"),
+        os:putenv("MY_REBUILD_TESTS_ENV_VAR2", "error"),
         ?assertEqual(compiled1, doteki:get_env([appcomp, key2, key22])),
         ?assertEqual(value_set_by_env, doteki:get_env([appcomp, key1])),
         ?assertEqual(125, doteki:get_env([appcomp, key3])),
@@ -60,7 +64,8 @@ doteki_update_test_() ->
                           ?assertMatch(V, lists:keyfind(K, 1, AllKey2))
                       end, [{key21,124},
                             {key22,compiled1},
-                            {key23,<<"second_value_set_by_env">>}])
+                            {key23,<<"second_value_set_by_env">>}]),
+        ?assertEqual(os:getenv("HOME"), doteki:get_env([appcomp, env]))
     end
    ].
 
