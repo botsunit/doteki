@@ -3,6 +3,11 @@
 @version 0.1.2
 @title Dōteki
 @doc
+
+[![Hex.pm version](https://img.shields.io/hexpm/v/doteki.svg?style=flat-square)](https://hex.pm/packages/doteki)
+[![Hex.pm downloads](https://img.shields.io/hexpm/dt/doteki.svg?style=flat-square)](https://hex.pm/packages/doteki)
+[![License](https://img.shields.io/hexpm/l/doteki.svg?style=flat-square)](https://hex.pm/packages/doteki)
+
 <h2>About</h2>
 
 <b>Dōteki</b> allow you to use dynamic configuration in your erlang application.
