@@ -9,6 +9,7 @@
   , {licenses, ["BSD-3"]}
   , {links, [{"Github", "https://github.com/botsunit/doteki"}]}
   , {files, ["src/*"
+             , "lib/*"
              , "Makefile"
              , "README.md"
              , "rebar.config"
