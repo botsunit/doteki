@@ -7,6 +7,107 @@
 
 <b>Dōteki</b> allow you to use dynamic configuration in your erlang application.
 
+<h2>Using environment variable</h2>
+
+In your configuration file, you can declare an explicit usage of en environment variable.
+
+To do so, you can use and atom, prefixed by <tt>env.</tt> :
+
+Erlang :
+<pre>
+[
+  {app, [
+    {key, 'env.ENV_VAR'}
+  ]}
+].
+</pre>
+
+Elixir :
+<pre>
+use Mix.Config
+
+config :app,
+  key: :"env.ENV_VAR"
+</pre>
+
+You can also use a tuple where the first element is the atom <tt>system</tt> or <tt>env</tt>,
+the second element is a string giving the environment variable name and the third element is
+the default value to use if the environment variable is not set. The third element is optional
+and if the environment variable is not set, Doteki will return <tt>undefined</tt>.
+
+Erlang :
+<pre>
+[
+  {app, [
+    {key, {system, "ENV_VAR"}}
+  ]}
+].
+</pre>
+
+Elixir :
+<pre>
+use Mix.Config
+
+config :app,
+  key: {:system, "ENV_VAR"}
+</pre>
+
+With those notations, when you get the value for <tt>[app, key]</tt>, Dōteki will return the value of the environment variable <tt>ENV_VAR</tt>.
+
+Erlang :
+<pre>
+export ENV_VAR=123
+1> doteki:get_env([app, key]).
+% => 123
+</pre>
+
+Elixir :
+<pre>
+export ENV_VAR=123
+iex(1)> Doteki.get_env([:app, :key])
+# => 123
+</pre>
+
+You can also overwrite every value in the configuration, using an environment variable. Example: if you have the following configuration :
+
+Erlang :
+<pre>
+[
+  {app, [
+    {key1, 'env.ENV_VAR'},
+    {key2, "hello world"}
+  ]}
+].
+</pre>
+
+Elixir :
+<pre>
+use Mix.Config
+
+config :app,
+  key1: :"env.ENV_VAR",
+  key2: "hello world"
+</pre>
+
+If you set an environment variable <tt>APP_KEY2</tt> and get the value for <tt>[app, key2]</tt> Dōteki will return defined by <tt>APP_KEY2</tt>.
+
+<blockquote>
+<b>WARNING</b> : The environment variables overwriting a key by its path are interpreted before those declares in the configuration. So if you export <tt>APP_KEY1</tt>, the value returned for <tt>[app, key1]</tt> will be the value exported for this variable.
+</blockquote>
+
+When Dōteki find an environment it will try to interpret it.
+
+<table width="100%" border="0">
+<tr><th>Type</th><th>export</th><th>Erlang</th><th>Elixir</th></tr>
+<tr><td>Atom</td><td><tt>"hello"</tt><br /><tt>"hello:atom"</tt><br /><tt>"hello:term"</tt></td><td><tt>hello</tt></td><td><tt>:hello</tt></td></tr>
+<tr><td>String</td><td><tt>"\"hello world\""</tt><br /><tt>"hello world:string"</tt></td><td><tt>"hello world"</tt></td><td><tt>'hello world'</tt></td></tr>
+<tr><td>Binary</td><td><tt>"&lt;&lt;\"hola mundo\"&gt;&gt;"</tt><br /><tt>"hola mundo:binary"</tt></td><td><tt>&lt;&lt;"hola mundo"&gt;&gt;</tt></td><td><tt>"hola mundo"</tt></td></tr>
+<tr><td>Integer</td><td><tt>"123"</tt><br /><tt>"123:integer"</tt></td><td><tt>123</tt></td><td><tt>123</tt></td></tr>
+<tr><td>Float</td><td><tt>"123.45"</tt><br /><tt>"123.45:integer"</tt></td><td><tt>123.45</tt></td><td><tt>123.45</tt></td></tr>
+<tr><td>Tuple</td><td><tt>"{a, \"b\", 123}"</tt><br /><tt>"{a, \"b\", 123}:term"</tt></td><td><tt>{a, "b", 123}</tt></td><td><tt>{:a, 'b', 123}</tt></td></tr>
+<tr><td>List</td><td><tt>"[a, \"b\", 123]"</tt><br /><tt>"[a, \"b\", 123]:term"</tt></td><td><tt>[a, "b", 123]</tt></td><td><tt>[:a, 'b', 123]</tt></td></tr>
+</table>
+
 <h2>Licence</h2>
 
 <p>Copyright (c) 2015, 2016, Bots Unit<br />

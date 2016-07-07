@@ -32,6 +32,7 @@ doteki_test_() ->
     , ?_test(t_envvar())
     , ?_test(t_envvar_untype())
     , ?_test(t_envvar_forcetype())
+    , ?_test(t_overwrite())
     , ?_test(t_fun())
     , ?_test(t_multi())
     , ?_test(t_multienv())
@@ -107,6 +108,14 @@ t_envvar_forcetype() ->
   ?assertEqual({atom, "string", [1,2,3,4]}, doteki:get_as_term([app2, app2key2, app2key21])),
   os:putenv("MY_CUSTOM_ENV_VAR", "[1,2,3,4]:term"),
   ?assertEqual([1,2,3,4], doteki:get_as_term([app2, app2key2, app2key21])).
+
+t_overwrite() ->
+  os:putenv("MY_CUSTOM_ENV_VAR", "atom_value"),
+  ?assertEqual(atom_value, doteki:get_as_atom([app2, app2key2, app2key21])),
+  os:putenv("APP2_APP2KEY2_APP2KEY21", "overwrited_atom_value"),
+  ?assertEqual(overwrited_atom_value, doteki:get_as_atom([app2, app2key2, app2key21])),
+  os:unsetenv("APP2_APP2KEY2_APP2KEY21"),
+  ?assertEqual(atom_value, doteki:get_as_atom([app2, app2key2, app2key21])).
 
 t_fun() ->
   ?assertEqual(123, doteki:get_env([app2, app2key2, app2key22])),
