@@ -508,50 +508,23 @@ get_as_term(A, B, C) ->
 compile_file(In, Out) ->
   case load_config_file(In) of
     {ok, Apps} ->
-      case lists:foldl(fun
-                         (_, {error, Error}) ->
-                           {error, Error};
-                         (App, {ok, Acc}) ->
-                           case compile_app(App) of
-                             {ok, Result} ->
-                               {ok, [Result|Acc]};
-                             Error ->
-                               Error
-                           end
-                       end, {ok, []}, Apps) of
-        {ok, Compiled} ->
-          file:write_file(Out, format([get_all_os_env(Compiled)]));
-        Error ->
-          Error
-      end;
+      Compiled = [compile_app(App) || App <- Apps],
+      io:format("=======> ~p~n", [Compiled]),
+      file:write_file(Out, format([get_all_os_env(Compiled)]));
     {error, _, E} ->
       {error, E}
   end.
 
 compile_app({App, Terms}) ->
-  case lists:foldl(fun
-                     (_, {error, Error}) ->
-                       {error, Error};
-                     (Term, {ok, Acc}) ->
-                       case compile_terms(Term) of
-                         {ok, Result} ->
-                           {ok, [Result|Acc]};
-                         Error ->
-                           Error
-                       end
-                   end, {ok, []}, Terms) of
-    {ok, CompiledTerms} ->
-      {ok, {App, lists:reverse(CompiledTerms)}};
-    Error ->
-      Error
-  end.
+  io:format("== compile app ~p~n", [App]),
+  {App, [compile_terms(T) || T <- Terms]}.
 
 compile_terms({Key, Value}) ->
   case compile_term(Value) of
     {ok, Result} ->
-      {ok, {Key, Result}};
-    Error ->
-      Error
+      {Key, Result};
+    undefined ->
+      {Key, undefined}
   end.
 
 
@@ -583,7 +556,9 @@ get_all_os_env([{Key, Value}|Rest], Path, Result) ->
         {ok, Other} ->
           get_all_os_env(Rest, Path, [{Key, Other}|Result])
       end
-  end.
+  end;
+get_all_os_env(Value, _, _) ->
+  Value.
 
 get_all_env([], _, Result) ->
   lists:reverse(Result);
