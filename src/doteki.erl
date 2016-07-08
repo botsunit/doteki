@@ -509,14 +509,12 @@ compile_file(In, Out) ->
   case load_config_file(In) of
     {ok, Apps} ->
       Compiled = [compile_app(App) || App <- Apps],
-      io:format("=======> ~p~n", [Compiled]),
       file:write_file(Out, format([get_all_os_env(Compiled)]));
     {error, _, E} ->
       {error, E}
   end.
 
 compile_app({App, Terms}) ->
-  io:format("== compile app ~p~n", [App]),
   {App, [compile_terms(T) || T <- Terms]}.
 
 compile_terms({Key, Value}) ->
