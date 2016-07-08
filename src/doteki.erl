@@ -957,5 +957,11 @@ compile_term_test() ->
                                                        [{{system, "DOTEKI_COMPILE_TERM_TEST_EN"}, "world"}]})),
   ?assertEqual({ok, {"hello", "world"}}, compile_term({'fun', ?MODULE, test_fun, 1,
                                                        [{{'env.DOTEKI_COMPILE_TERM_TEST_EN', undefined}, "world"}]})),
-  ?assertEqual(undefined, compile_term({'fun', ?MODULE, test_fun})).
+  ?assertEqual(undefined, compile_term({'fun', ?MODULE, test_fun})),
+  os:putenv("DOTEKI_TEST_ENV_HOST", "localhost"),
+  ?assertEqual({ok, <<"http://localhost:8080">>},
+               compile_term(
+                 {fn,bucbinary,join,
+                  [[<<"http://">>,{system,<<"DOTEKI_TEST_ENV_HOST">>},<<":8080">>],
+                   <<>>]})).
 -endif.
