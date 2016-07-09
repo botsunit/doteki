@@ -678,15 +678,29 @@ merge_values([Value|Rest], Acc) ->
 % {env, "ENV_VAR"}
 compile_term({env, ENV}) ->
   compile_term({system, ENV, undefined});
+compile_term({env, ENV, as, Type}) ->
+  compile_term({system, ENV, as, Type, undefined});
 % {system, "ENV_VAR"}
 compile_term({system, ENV}) ->
   compile_term({system, ENV, undefined});
+compile_term({system, ENV, as, Type}) ->
+  compile_term({system, ENV, as, Type, undefined});
 % {env, "ENV_VAR", Default}
 compile_term({env, ENV, Default}) ->
   compile_term({system, ENV, Default});
 % {system, "ENV_VAR", Default}
 compile_term({system, ENV, Default}) ->
   get_env_var(ENV, Default);
+compile_term({env, ENV, as, Type, Default}) ->
+  compile_term({system, ENV, as, Type, Default});
+compile_term({system, ENV, as, Type, Default}) ->
+  to_value(
+    case os:getenv(bucs:to_string(ENV)) of
+      false ->
+        Default;
+      Value ->
+        {ok, V} = env_var_to_val(Value), V
+    end, bucs:to_string(Type));
 % {fun, Module, Function}
 compile_term({'fun', Module, Function}) when is_atom(Module),
                                              is_atom(Function) ->
@@ -866,7 +880,7 @@ env_var_to_val(Value) ->
       to_value(Value, "term")
   end.
 
-to_value(V, "string") -> {ok, V};
+to_value(V, "string") -> {ok, bucs:to_string(V)};
 to_value(V, "atom") -> {ok, bucs:to_atom(V)};
 to_value(V, "binary") -> {ok, bucs:to_binary(V)};
 to_value(V, "integer") -> {ok, bucs:to_integer(V)};
@@ -880,7 +894,8 @@ to_value(V, "term") ->
   catch
     _:_ ->
       {ok, V}
-  end.
+  end;
+to_value(V, _) -> {ok, V}.
 
 format(Terms) ->
   lists:foldl(fun(Term, Content) ->
@@ -963,5 +978,18 @@ compile_term_test() ->
                compile_term(
                  {fn,bucbinary,join,
                   [[<<"http://">>,{system,<<"DOTEKI_TEST_ENV_HOST">>},<<":8080">>],
-                   <<>>]})).
+                   <<>>]})),
+  os:putenv("DOTEKI_TEST_ENV", "1234.56"),
+  ?assertEqual({ok, 1234.56},
+               compile_term({system, "DOTEKI_TEST_ENV"})),
+  ?assertEqual({ok, "1234.56"},
+               compile_term({system, "DOTEKI_TEST_ENV", as, string})),
+  ?assertEqual({ok, <<"1234.56">>},
+               compile_term({system, "DOTEKI_TEST_ENV", as, binary})),
+  ?assertEqual({ok, 1234.56},
+               compile_term({system, "DOTEKI_TEST_ENV", as, float})),
+  ?assertEqual({ok, 1234.56},
+               compile_term({system, "DOTEKI_TEST_ENV", as, term})),
+  ?assertEqual({ok, 1235},
+               compile_term({system, "DOTEKI_TEST_ENV", as, integer})).
 -endif.

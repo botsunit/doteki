@@ -111,6 +111,30 @@ When Dōteki find an environment it will try to interpret it.
 <tr><td>List</td><td><tt>"[a, \"b\", 123]"</tt><br /><tt>"[a, \"b\", 123]:term"</tt></td><td><tt>[a, "b", 123]</tt></td><td><tt>[:a, 'b', 123]</tt></td></tr>
 </table>
 
+In some case, you can want to force Dōteki to interpret a value. For example, if you declare an environment variable <tt>MY_NUMBER</tt> and want it to be interpreted as a string, you can use the following notation :
+
+Erlang :
+<pre>
+{system, "MY_NUMBER", as, string}
+</pre>
+
+Elixir :
+<pre>
+{:system, "MY_NUMBER", :as, :string}
+</pre>
+
+You can also add a default value in case where <tt>MY_NUMBER</tt> is not set :
+
+Erlang :
+<pre>
+{system, "MY_NUMBER", as, string, "1234"}
+</pre>
+
+Elixir :
+<pre>
+{:system, "MY_NUMBER", :as, :string, '1234'}
+</pre>
+
 <h2>Using functions</h2>
 
 If you want to use a function, you can use those notations :

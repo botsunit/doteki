@@ -139,6 +139,40 @@ When Dōteki find an environment it will try to interpret it.
 </table>
 
 
+In some case, you can want to force Dōteki to interpret a value. For example, if you declare an environment variable `MY_NUMBER` and want it to be interpreted as a string, you can use the following notation :
+
+Erlang :
+
+```
+
+{system, "MY_NUMBER", as, string}
+
+```
+Elixir :
+
+```
+
+{:system, "MY_NUMBER", :as, :string}
+
+```
+
+You can also add a default value in case where `MY_NUMBER` is not set :
+
+Erlang :
+
+```
+
+{system, "MY_NUMBER", as, string, "1234"}
+
+```
+Elixir :
+
+```
+
+{:system, "MY_NUMBER", :as, :string, '1234'}
+
+```
+
 
 ## Using functions ##
 

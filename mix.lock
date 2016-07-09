@@ -1,1 +1,1 @@
-%{"bucs": {:hex, :bucs, "0.1.2", "eab5a95b6507ceacb774d76c14dd2cf3334955d0bc8a87510ad21b35f8a98158", [:rebar3, :mix, :make], []}}
+%{"bucs": {:hex, :bucs, "0.1.4", "2cdb83de6a398bf0676458e47243a231fc7694abaec7d52e68a501762cb0d013", [:rebar3, :mix, :make], []}}
