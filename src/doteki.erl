@@ -569,10 +569,20 @@ get_all_env([], _, Result) ->
 get_all_env([{Key, Value}|Rest], Path, Result) ->
   case is_list(Value) and not bucs:is_string(Value) of
     true ->
-      get_all_env(Rest, Path, [{Key, get_all_env(Value, [Key|Path], [])}|Result]);
+      case all_KV(Value) of
+        true ->
+          get_all_env(Rest, Path, [{Key, get_all_env(Value, [Key|Path], [])}|Result]);
+        false ->
+          get_all_env(Rest, Path, [{Key, get_env(lists:reverse([Key|Path]))}|Result])
+      end;
     false ->
       get_all_env(Rest, Path, [{Key, get_env(lists:reverse([Key|Path]))}|Result])
   end.
+
+all_KV(List) ->
+  lists:all(fun(Tuple) ->
+                is_tuple(Tuple) andalso size(Tuple) == 2
+            end, List).
 
 get_first_env([], Default) ->
   Default;
