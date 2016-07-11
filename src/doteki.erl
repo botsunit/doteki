@@ -46,12 +46,18 @@
 
 % @hidden
 main([In, Out|PA]) ->
-  [code:add_patha(D) || D <- PA],
-  case compile_file(In, Out) of
-    ok ->
-      erlang:halt(0);
-    {error, Error} ->
-      io:format("Compilation faild: ~p~n", [Error]),
+  try
+    [code:add_patha(D) || D <- PA],
+    case compile_file(In, Out) of
+      ok ->
+        erlang:halt(0);
+      {error, Error} ->
+        io:format("Compilation faild: ~p~n", [Error]),
+        erlang:halt(1)
+    end
+  catch
+    _:Reason ->
+      io:format("Compilation faild: ~p~n", [Reason]),
       erlang:halt(1)
   end;
 main(_) ->
