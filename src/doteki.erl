@@ -605,12 +605,8 @@ get_one_env([App|Keys] = Path, Default) ->
           Default
       end;
     EnvVal ->
-      case env_var_to_val(EnvVal) of
-        {ok, EnvVal} ->
-          Default;
-        {ok, Other} ->
-          Other
-      end
+      {ok, Result} = env_var_to_val(EnvVal),
+      Result
   end.
 
 os_get_env(Path) ->
