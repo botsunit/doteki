@@ -515,7 +515,7 @@ compile_file(In, Out) ->
   case load_config_file(In) of
     {ok, Apps} ->
       Compiled = [compile_app(App) || App <- Apps],
-      file:write_file(Out, format([get_all_os_env(Compiled)]));
+      file:write_file(Out, format(get_all_os_env(Compiled)));
     {error, _, E} ->
       {error, E}
   end.
