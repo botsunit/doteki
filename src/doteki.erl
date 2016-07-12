@@ -910,37 +910,7 @@ to_value(V, "term") ->
 to_value(V, _) -> {ok, V}.
 
 format(Terms) ->
-  lists:foldl(fun(Term, Content) ->
-                  Content ++ pretty(Term)
-              end, "", Terms).
-
-pretty(Term) ->
-  Abstract = erl_syntax:abstract(Term),
-  AnnF = fun(Node) -> annotate_tuple(Node) end,
-  AnnAbstract = postorder(AnnF, Abstract),
-  HookF = fun(Node, Ctxt, Cont) ->
-              Doc = Cont(Node, Ctxt),
-              prettypr:above(prettypr:empty(), Doc)
-          end,
-  io_lib:format("~s~n", [
-                         lists:flatten(
-                           erl_prettypr:format(
-                             AnnAbstract, [{hook, HookF}, {paper, 160}, {ribbon, 145}])) ++ "."]).
-
-annotate_tuple(Node) ->
-  case erl_syntax:type(Node) of
-    tuple -> erl_syntax:add_ann(tuple, Node);
-    _ -> Node
-  end.
-
-postorder(F, Tree) ->
-  F(case erl_syntax:subtrees(Tree) of
-      [] -> Tree;
-      List -> erl_syntax:update_tree(Tree,
-                                     [[postorder(F, Subtree)
-                                       || Subtree <- Group]
-                                      || Group <- List])
-    end).
+  io_lib:format("~p.", [Terms]).
 
 -ifdef(TEST).
 test_fun(X) ->
