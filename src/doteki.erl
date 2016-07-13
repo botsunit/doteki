@@ -554,12 +554,8 @@ get_all_os_env([{Key, Value}|Rest], Path, Result) ->
           get_all_os_env(Rest, Path, [{Key, Value}|Result])
       end;
     EnvVal ->
-      case env_var_to_val(EnvVal) of
-        {ok, EnvVal} ->
-          get_all_os_env(Rest, Path, [{Key, undefined}|Result]);
-        {ok, Other} ->
-          get_all_os_env(Rest, Path, [{Key, Other}|Result])
-      end
+      {ok, Other} = env_var_to_val(EnvVal),
+      get_all_os_env(Rest, Path, [{Key, Other}|Result])
   end;
 get_all_os_env(Value, _, _) ->
   Value.
