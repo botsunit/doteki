@@ -21,7 +21,7 @@ defmodule Doteki.Mixfile do
 
   defp deps do
     [
-      {:bucs, "~> 0.1.4"}    
+      {:bucs, "~> 0.1.5"}    
     ]
   end
 end
