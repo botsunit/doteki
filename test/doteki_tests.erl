@@ -20,7 +20,10 @@
                        {app2key2, [
                                    {app2key21, 'env.MY_CUSTOM_ENV_VAR'},
                                    {app2key22, 'fun.doteki_tests:function/0'}
-                                  ]}
+                                  ]},
+                       {'Elixir.Domain.Name', [
+                                               {elixir_key, elixir_value}
+                                              ]}
                       ]}
               ]).
 
@@ -71,7 +74,9 @@ t_envvar() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "{atom, string, [1,2,3,4]}:term"),
   ?assertEqual({atom, string, [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])),
   os:putenv("MY_CUSTOM_ENV_VAR", "{atom, \"string\", [1,2,3,4]}:term"),
-  ?assertEqual({atom, "string", [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])).
+  ?assertEqual({atom, "string", [1,2,3,4]}, doteki:get_env([app2, app2key2, app2key21])),
+  os:putenv("APP2_ELIXIR_DOMAIN_NAME_ELIXIR_KEY", "hello"),
+  ?assertEqual(hello, doteki:get_env([app2, 'Elixir.Domain.Name', elixir_key])).
 
 t_envvar_untype() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "atom_value"),

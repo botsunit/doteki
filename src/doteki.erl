@@ -607,7 +607,7 @@ get_one_env([App|Keys] = Path, Default) ->
 
 os_get_env(Path) ->
   EnvVar = string:join(
-             [string:to_upper(E1)
+             [string:to_upper(bucstring:gsub(E1, ".", "_"))
               || E1 <- [bucs:to_string(E0)
                         || E0 <- Path]],
              "_"),
