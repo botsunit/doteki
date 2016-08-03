@@ -563,19 +563,14 @@ get_all_os_env(Value, _, _) ->
 get_all_env([], _, Result) ->
   lists:reverse(Result);
 get_all_env([{Key, Value}|Rest], Path, Result) ->
-  case is_list(Value) and not bucs:is_string(Value) of
+  case is_list(Value) andalso not bucs:is_string(Value) andalso all_tuples(Value) of
     true ->
-      case all_KV(Value) of
-        true ->
-          get_all_env(Rest, Path, [{Key, get_all_env(Value, [Key|Path], [])}|Result]);
-        false ->
-          get_all_env(Rest, Path, [{Key, get_env(lists:reverse([Key|Path]))}|Result])
-      end;
+      get_all_env(Rest, Path, [{Key, get_all_env(Value, [Key|Path], [])}|Result]);
     false ->
       get_all_env(Rest, Path, [{Key, get_env(lists:reverse([Key|Path]))}|Result])
   end.
 
-all_KV(List) ->
+all_tuples(List) ->
   lists:all(fun(Tuple) ->
                 is_tuple(Tuple) andalso size(Tuple) == 2
             end, List).
@@ -755,7 +750,7 @@ compile_term({fn, Module, Function, Arity, Args}) when is_atom(Module),
               try
                 {ok, erlang:apply(Module, Function, CompiledArgs)}
               catch
-                _:_ ->
+                _E:_R ->
                   undefined
               end;
             false ->
@@ -882,7 +877,7 @@ get_env_var(ENV, Default) ->
 
 env_var_to_val(Value) ->
   case re:run(Value, "(.*):(atom|string|binary|integer|float|term)$", [{capture, all, list}]) of
-    {match,[_, Value1, Type]} ->
+    {match, [_, Value1, Type]} ->
       to_value(Value1, Type);
     _ ->
       to_value(Value, "term")
@@ -914,8 +909,8 @@ test_fun(X) ->
 compile_term_test() ->
   ?assertEqual({ok, atom}, compile_term(atom)),
   ?assertEqual({ok, "string"}, compile_term("string")),
-  ?assertEqual({ok, [1,2,3,4]}, compile_term([1,2,3,4])),
-  ?assertEqual({ok, {a,b,c,d}}, compile_term({a,b,c,d})),
+  ?assertEqual({ok, [1, 2, 3, 4]}, compile_term([1, 2, 3, 4])),
+  ?assertEqual({ok, {a, b, c, d}}, compile_term({a, b, c, d})),
   ?assertEqual({ok, {a, "string", 1,
                      {a, "string", 1,
                       [1, a, "string",
@@ -954,8 +949,8 @@ compile_term_test() ->
   os:putenv("DOTEKI_TEST_ENV_HOST", "localhost"),
   ?assertEqual({ok, <<"http://localhost:8080">>},
                compile_term(
-                 {fn,bucbinary,join,
-                  [[<<"http://">>,{system,<<"DOTEKI_TEST_ENV_HOST">>},<<":8080">>],
+                 {fn, bucbinary, join,
+                  [[<<"http://">>, {system, <<"DOTEKI_TEST_ENV_HOST">>}, <<":8080">>],
                    <<>>]})),
   os:putenv("DOTEKI_TEST_ENV", "1234.56"),
   ?assertEqual({ok, 1234.56},

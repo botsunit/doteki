@@ -62,9 +62,9 @@ doteki_update_test_() ->
         {key2, AllKey2} = lists:keyfind(key2, 1, AllEnv),
         lists:foreach(fun({K, _} = V) ->
                           ?assertMatch(V, lists:keyfind(K, 1, AllKey2))
-                      end, [{key21,124},
-                            {key22,compiled1},
-                            {key23,<<"second_value_set_by_env">>}]),
+                      end, [{key21, 124},
+                            {key22, compiled1},
+                            {key23, <<"second_value_set_by_env">>}]),
         ?assertEqual(os:getenv("HOME"), doteki:get_env([appcomp, env]))
     end
    ].
