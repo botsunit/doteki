@@ -65,6 +65,25 @@ define render_template
   $(verbose) printf -- '$(subst $(newline),\n,$(subst %,%%,$(subst ','\'',$(subst $(tab),$(WS),$(call $(1))))))\n' > $(2)
 endef
 
+# Erlang
+
+ERL = erl +A0 -noinput -boot start_clean
+
+define erlang
+$(ERL) -noshell -s init stop -eval "$(subst $(newline),,$(subst ",\",$(1)))"
+endef
+
+define get_version.erl
+  {ok, [{application, _, X}]} = file:consult("$(1)"),
+  {vsn, VSN} = lists:keyfind(vsn, 1, X),
+  io:format("~s", [VSN]).
+endef
+
+define get_app_name.erl
+  {ok, [{application, AppName, _}]} = file:consult("$(1)"),
+  io:format("~s", [AppName]).
+endef
+
 ifndef WS
 ifdef SP
 WS = $(subst a,,a $(wordlist 1,$(SP),a a a a a a a a a a a a a a a a a a a a))
@@ -83,6 +102,15 @@ FIND_REBAR = \
                 if [ -z "$$REBAR_BIN" ]; then echo 1>&2 "Unable to find rebar3"; exit 2; fi
 REBAR = $(FIND_REBAR); $$REBAR_BIN
 
+# Project
+
+APP_SRC=$(shell find src -name "*.app.src")
+ifeq ($(APP_SRC),)
+else
+  APP_VERSION=$(shell $(call erlang,$(call get_version.erl,${APP_SRC})))
+  APP_NAME=$(shell $(call erlang,$(call get_app_name.erl,${APP_SRC})))
+endif
+
 # mix
 
 MIX = mix
@@ -92,9 +120,10 @@ ifeq ($(HAS_ELIXIR), 1)
 
 compile-ex: elixir clean
 	$(verbose) $(MIX) deps.get
+	$(verbose) $(MIX) deps.compile
 	$(verbose) $(MIX) compile
 
-elixir:
+elixir: ## Generate Elixir bindings (mix.exs and libs)
 	$(verbose) $(REBAR) elixir generate_mix
 	$(verbose) $(REBAR) elixir generate_lib
 
@@ -127,19 +156,20 @@ LINT=lint
 endif
 
 compile-erl:
+	$(verbose) $(REBAR) update
 	$(verbose) $(REBAR) compile
 
-tests:
+tests: ## Run tests
 	$(verbose) $(REBAR) eunit
 
-doc:
+doc:: ## Generate doc
 	$(verbose) $(REBAR) as doc edoc
 
-dist: $(DIST)
+dist: $(DIST) ## Create a distribution
 
-clean: $(CLEAN)
+clean: $(CLEAN) ## Clean
 
-distclean: $(DISTCLEAN)
+distclean: $(DISTCLEAN) ## Clean the distribution
 
 dev: compile-erl
 	$(verbose) erl -pa _build/default/lib/*/ebin _build/default/lib/*/include $(ERL_CONFIG)
@@ -151,4 +181,41 @@ clean-erl:
 
 distclean-erl: clean-erl
 	$(verbose) $(RM_F) rebar.lock
+
+info: ## Display application informations
+  $(verbose) echo "App source file: $(APP_SRC)"
+  $(verbose) echo "App name:        $(APP_NAME)"
+  $(verbose) echo "App version:     $(APP_VERSION)"
+
+tag: DO_TAG ?= $(shell read -p "tag version $(APP_VERSION) (y/n) [n]: " pwd; echo $$pwd)
+
+tag: ## Create a git tag
+	$(verbose) echo $(if $(findstring $(DO_TAG),y,Y,yes,Yes,YES),$(shell git tag $(APP_VERSION)),)
+
+# Elixir
+
+local.hex: ## Install hexfor Mix
+	$(MIX) local.hex --force
+
+local.rebar: ## Install rebar for Mix
+	$(MIX) local.rebar --force
+
+# Update
+
+BU_MK_REPO ?= https://github.com/botsunit/bu.mk
+BU_MK_COMMIT ?=
+BU_MK_BUILD_DIR ?= .bu.mk.build
+
+bu-mk: ## Update bu.mk
+	git clone $(BU_MK_REPO) $(BU_MK_BUILD_DIR)
+ifdef BU_MK_COMMIT
+	cd $(BU_MK_BUILD_DIR) && git checkout $(BU_MK_COMMIT)
+endif
+	$(CP) $(BU_MK_BUILD_DIR)/bu.mk ./bu.mk
+	$(RM_RF) $(BU_MK_BUILD_DIR)
+
+# Help
+
+help: ## Show this help.
+	$(verbose) echo "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\033[33m\1\\033[m:\2/' | column -c2 -t -s :)"
 

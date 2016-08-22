@@ -11,6 +11,7 @@
   , {files, ["src/*"
              , "lib/*"
              , "Makefile"
+             , "bu.mk"
              , "README.md"
              , "rebar.config"
              , "rebar.lock"
