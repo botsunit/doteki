@@ -1,6 +1,6 @@
 {application, doteki, [
 	  {description, "Dynamic configuration in your erlang application"}
-	, {vsn, "0.1.11"}
+	, {vsn, "0.1.12"}
 	, {modules, []}
 	, {registered, []}
 	, {applications, [kernel,stdlib]}
