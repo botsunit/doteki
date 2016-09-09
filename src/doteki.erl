@@ -585,6 +585,7 @@ get_first_env([Path|Rest], Default) ->
       Other
   end.
 get_one_env([App|Keys] = Path, Default) ->
+  _ = application:load(App),
   case os_get_env(Path) of
     false ->
       Env = application:get_all_env(App),
