@@ -22,7 +22,7 @@ defmodule Doteki.Mixfile do
 
   defp deps do
     [
-      {:bucs, "~> 0.1.8"}
+      {:bucs, "~> 0.1.8"}    
     ]
   end
 
@@ -50,5 +50,5 @@ defmodule Doteki.Mixfile do
       (cmd) ->
         Mix.Shell.cmd cmd, [], fn(x) -> Mix.Shell.IO.info(String.strip(x)) end
       end).(command)
-  end
+  end    
 end
