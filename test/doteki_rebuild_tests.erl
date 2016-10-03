@@ -36,7 +36,9 @@ doteki_update_test_() ->
         ?assertEqual(undefined, doteki:get_env([appcomp, key4])),
         os:putenv("MY_REBUILD_TESTS_ENV_VAR2", "\"value4\""),
         ?assertEqual("value4", doteki:get_env([appcomp, key4])),
-        ?assertEqual(os:getenv("HOME"), doteki:get_env([appcomp, env]))
+        ?assertEqual(os:getenv("HOME"), doteki:get_env([appcomp, env])),
+        os:unsetenv("MY_REBUILD_TESTS_ENV_VAR1"),
+        os:unsetenv("MY_REBUILD_TESTS_ENV_VAR2")
     end
     , fun() ->
         os:putenv("MY_REBUILD_TESTS_ENV_VAR1", "compiled1"),
@@ -65,7 +67,11 @@ doteki_update_test_() ->
                       end, [{key21, 124},
                             {key22, compiled1},
                             {key23, <<"second_value_set_by_env">>}]),
-        ?assertEqual(os:getenv("HOME"), doteki:get_env([appcomp, env]))
+        ?assertEqual(os:getenv("HOME"), doteki:get_env([appcomp, env])),
+        os:unsetenv("MY_REBUILD_TESTS_ENV_VAR1"),
+        os:unsetenv("MY_REBUILD_TESTS_ENV_VAR2"),
+        os:unsetenv("APPCOMP_KEY1"),
+        os:unsetenv("APPCOMP_KEY2_KEY23")
     end
    ].
 

@@ -76,7 +76,9 @@ t_envvar() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "{atom, \"string\", [1, 2, 3, 4]}:term"),
   ?assertEqual({atom, "string", [1, 2, 3, 4]}, doteki:get_env([app2, app2key2, app2key21])),
   os:putenv("APP2_ELIXIR_DOMAIN_NAME_ELIXIR_KEY", "hello"),
-  ?assertEqual(hello, doteki:get_env([app2, 'Elixir.Domain.Name', elixir_key])).
+  ?assertEqual(hello, doteki:get_env([app2, 'Elixir.Domain.Name', elixir_key])),
+  os:unsetenv("APP1_APP1KEY2_APP1KEY22"),
+  os:unsetenv("MY_CUSTOM_ENV_VAR").
 
 t_envvar_untype() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "atom_value"),
@@ -112,7 +114,8 @@ t_envvar_forcetype() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "{atom, \"string\", [1, 2, 3, 4]}:term"),
   ?assertEqual({atom, "string", [1, 2, 3, 4]}, doteki:get_as_term([app2, app2key2, app2key21])),
   os:putenv("MY_CUSTOM_ENV_VAR", "[1, 2, 3, 4]:term"),
-  ?assertEqual([1, 2, 3, 4], doteki:get_as_term([app2, app2key2, app2key21])).
+  ?assertEqual([1, 2, 3, 4], doteki:get_as_term([app2, app2key2, app2key21])),
+  os:unsetenv("MY_CUSTOM_ENV_VAR").
 
 t_overwrite() ->
   os:putenv("MY_CUSTOM_ENV_VAR", "atom_value"),
@@ -120,7 +123,9 @@ t_overwrite() ->
   os:putenv("APP2_APP2KEY2_APP2KEY21", "overwrited_atom_value"),
   ?assertEqual(overwrited_atom_value, doteki:get_as_atom([app2, app2key2, app2key21])),
   os:unsetenv("APP2_APP2KEY2_APP2KEY21"),
-  ?assertEqual(atom_value, doteki:get_as_atom([app2, app2key2, app2key21])).
+  ?assertEqual(atom_value, doteki:get_as_atom([app2, app2key2, app2key21])),
+  os:unsetenv("MY_CUSTOM_ENV_VAR"),
+  os:unsetenv("APP2_APP2KEY2_APP2KEY21").
 
 t_fun() ->
   ?assertEqual(123, doteki:get_env([app2, app2key2, app2key22])),
@@ -134,7 +139,8 @@ t_fun() ->
 t_multi() ->
   ?assertEqual([{app1key21, 246}, {app1key22, app1value22}], doteki:get_env([app1, app1key2])),
   os:putenv("MY_CUSTOM_ENV_VAR", "app2value21:string"),
-  ?assertEqual([{app2key21, "app2value21"}, {app2key22, 123}], doteki:get_env([app2, app2key2])).
+  ?assertEqual([{app2key21, "app2value21"}, {app2key22, 123}], doteki:get_env([app2, app2key2])),
+  os:unsetenv("MY_CUSTOM_ENV_VAR").
 
 t_multienv() ->
   ?assertEqual(app1value1, doteki:get_env([[app1, app1key1], [a, b], [c, d]], undefined)),

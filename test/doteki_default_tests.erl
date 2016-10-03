@@ -46,5 +46,6 @@ t_default_setenv() ->
   os:putenv("APP3_APP3MISSING1", "{env, 1, \"tuple\"}"),
   ?assertEqual({env, 1, "tuple"}, doteki:get_env([app3, app3missing1], {missing, 1, "tuple"})),
   os:putenv("APP3_APP3MISSING1", "\"env1str\""),
-  ?assertEqual("env1str", doteki:get_env([app3, app3missing1], "missing1str")).
+  ?assertEqual("env1str", doteki:get_env([app3, app3missing1], "missing1str")),
+  os:unsetenv("APP3_APP3MISSING1").
 

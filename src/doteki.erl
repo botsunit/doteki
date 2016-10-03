@@ -681,29 +681,34 @@ merge_values([Value|Rest], Acc) ->
 
 % {env, "ENV_VAR"}
 compile_term({env, ENV}) ->
-  compile_term({system, ENV, undefined});
+  compile_term({system, ENV});
+compile_term({env, ENV, Default}) ->
+  compile_term({system, ENV, Default});
 compile_term({env, ENV, as, Type}) ->
-  compile_term({system, ENV, as, Type, undefined});
+  compile_term({system, ENV, as, Type});
+compile_term({env, ENV, as, Type, Default}) ->
+  compile_term({system, ENV, as, Type, Default});
 % {system, "ENV_VAR"}
 compile_term({system, ENV}) ->
   compile_term({system, ENV, undefined});
-compile_term({system, ENV, as, Type}) ->
-  compile_term({system, ENV, as, Type, undefined});
-% {env, "ENV_VAR", Default}
-compile_term({env, ENV, Default}) ->
-  compile_term({system, ENV, Default});
-% {system, "ENV_VAR", Default}
 compile_term({system, ENV, Default}) ->
   get_env_var(ENV, Default);
-compile_term({env, ENV, as, Type, Default}) ->
-  compile_term({system, ENV, as, Type, Default});
+compile_term({system, ENV, as, Type}) ->
+    case os:getenv(bucs:to_string(ENV)) of
+      false ->
+        {ok, undefined};
+      Value ->
+        {ok, V} = env_var_to_val(Value),
+        to_value(V, bucs:to_string(Type))
+    end;
 compile_term({system, ENV, as, Type, Default}) ->
   to_value(
     case os:getenv(bucs:to_string(ENV)) of
       false ->
         Default;
       Value ->
-        {ok, V} = env_var_to_val(Value), V
+        {ok, V} = env_var_to_val(Value),
+        V
     end, bucs:to_string(Type));
 % {fun, Module, Function}
 compile_term({'fun', Module, Function}) when is_atom(Module),
@@ -910,6 +915,7 @@ test_fun(X) ->
 compile_term_test() ->
   ?assertEqual({ok, atom}, compile_term(atom)),
   ?assertEqual({ok, "string"}, compile_term("string")),
+  ?assertEqual({ok, <<"binary">>}, compile_term(<<"binary">>)),
   ?assertEqual({ok, [1, 2, 3, 4]}, compile_term([1, 2, 3, 4])),
   ?assertEqual({ok, {a, b, c, d}}, compile_term({a, b, c, d})),
   ?assertEqual({ok, {a, "string", 1,
@@ -965,5 +971,9 @@ compile_term_test() ->
   ?assertEqual({ok, 1234.56},
                compile_term({system, "DOTEKI_TEST_ENV", as, term})),
   ?assertEqual({ok, 1235},
-               compile_term({system, "DOTEKI_TEST_ENV", as, integer})).
+               compile_term({system, "DOTEKI_TEST_ENV", as, integer})),
+  os:unsetenv("DOTEKI_COMPILE_TERM_TEST_ES"),
+  os:unsetenv("DOTEKI_COMPILE_TERM_TEST_EN"),
+  os:unsetenv("DOTEKI_TEST_ENV_HOST"),
+  os:unsetenv("DOTEKI_TEST_ENV").
 -endif.
