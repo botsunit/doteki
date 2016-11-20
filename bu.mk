@@ -191,9 +191,9 @@ distclean-erl: clean-erl
 	$(verbose) $(RM_F) rebar.lock
 
 info: ## Display application informations
-  $(verbose) echo "App source file: $(APP_SRC)"
-  $(verbose) echo "App name:        $(APP_NAME)"
-  $(verbose) echo "App version:     $(APP_VERSION)"
+	$(verbose) echo "App source file: $(APP_SRC)"
+	$(verbose) echo "App name:        $(APP_NAME)"
+	$(verbose) echo "App version:     $(APP_VERSION)"
 
 tag: DO_TAG ?= $(shell read -p "tag version $(APP_VERSION) (y/n) [n]: " pwd; echo $$pwd)
 
