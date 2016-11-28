@@ -22,20 +22,26 @@ defmodule Doteki.Mixfile do
 
   defp deps do
     [
-      {:bucs, "~> 1.0.1"}    
+      {:bucs, "~> 1.0.2"}    
     ]
   end
 
   defp aliases do
-    [compile: [&pre_compile_hooks/1, "compile", &post_compile_hooks/1]]
+    [compile: &compile_with_hooks/1]
   end
 
-  defp pre_compile_hooks(_) do
+  defp compile_with_hooks(args) do
+    pre_compile_hooks()
+    :ok = Mix.Task.run("compile", args)
+    post_compile_hooks()
+  end
+
+  defp pre_compile_hooks() do
     run_hook_cmd [
     ]
   end
 
-  defp post_compile_hooks(_) do
+  defp post_compile_hooks() do
     run_hook_cmd [
     ]
   end
